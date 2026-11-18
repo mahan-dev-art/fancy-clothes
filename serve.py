@@ -22,6 +22,8 @@ How it works (short version):
   * Uploaded pictures are saved under site/uploads/ and served like the rest.
 
 Usage: python3 serve.py [port]   (default 8080)
+       PORT=3000 python3 serve.py  -- port from the environment (used by
+       Deplexo, which sets PORT when it runs the container)
 """
 import base64
 import html
@@ -624,13 +626,22 @@ def _parse_multipart_file(raw, boundary):
 
 
 if __name__ == "__main__":
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
+    # Port: command-line argument wins, then the PORT environment variable
+    # (Deplexo sets PORT when it runs the container), then 8080 for local runs.
+    if len(sys.argv) > 1:
+        port = int(sys.argv[1])
+    else:
+        port = int(os.environ.get("PORT", "8080"))
     os.makedirs(UPLOADS_DIR, exist_ok=True)
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    # Listen on all interfaces so the container is reachable from outside
+    # (locally this still works the same: http://localhost:PORT).
+    server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
     url = f"http://localhost:{port}"
     print(f"Site is running at {url}  (press Ctrl+C to stop)")
     print(f"Admin panel: {url}/admin")
-    if os.environ.get("NO_BROWSER") != "1":
+    # Do not try to open a browser inside a container (PORT is set there);
+    # locally the browser still opens unless NO_BROWSER=1.
+    if os.environ.get("NO_BROWSER") != "1" and "PORT" not in os.environ:
         webbrowser.open(url)
     try:
         server.serve_forever()
