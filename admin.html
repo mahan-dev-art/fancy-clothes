@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>پنل مدیریت فروشگاه</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Tahoma, sans-serif; background: #f5efe8; color: #2b2118; }
+  header { background: #3b2a1e; color: #fff; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  header h1 { margin: 0; font-size: 20px; }
+  header a { color: #ffd9a0; text-decoration: none; font-size: 14px; }
+  main { max-width: 900px; margin: 0 auto; padding: 20px; }
+  .card { background: #fff; border: 1px solid #e3d8cb; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+  .card h2 { margin: 0 0 14px; font-size: 17px; }
+  label { display: block; font-size: 13px; margin: 10px 0 4px; color: #6b5847; }
+  input[type=text], input[type=file] { width: 100%; padding: 10px; border: 1px solid #d8cbb9; border-radius: 8px; font-family: Tahoma, sans-serif; font-size: 14px; background: #fffdf9; }
+  input[type=color] { width: 60px; height: 38px; padding: 2px; border: 1px solid #d8cbb9; border-radius: 8px; background: #fffdf9; vertical-align: middle; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 140px; }
+  button { cursor: pointer; font-family: Tahoma, sans-serif; }
+  .btn { background: #3b2a1e; color: #fff; border: none; border-radius: 8px; padding: 11px 22px; font-size: 14px; margin-top: 16px; }
+  .btn:hover { background: #5a4230; }
+  .btn-light { background: #efe6da; color: #3b2a1e; }
+  .btn-danger { background: #b3372f; color: #fff; }
+  .btn-small { padding: 7px 14px; font-size: 13px; margin: 0 4px 0 0; }
+  .hint { font-size: 12px; color: #8a7663; margin-top: 4px; }
+  #msg { display: none; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+  #msg.ok { display: block; background: #e3f2df; color: #2c6b2a; }
+  #msg.err { display: block; background: #fbe3e1; color: #8f2b24; }
+  .product { display: flex; gap: 14px; align-items: center; background: #fff; border: 1px solid #e3d8cb; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+  .product img { width: 74px; height: 98px; object-fit: cover; border-radius: 8px; background: #efe6da; }
+  .product .info { flex: 1; min-width: 0; }
+  .product .name { font-weight: bold; font-size: 15px; }
+  .product .meta { font-size: 13px; color: #6b5847; margin-top: 4px; }
+  .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid #ccc; vertical-align: -2px; margin-left: 4px; }
+  .product .actions { white-space: nowrap; }
+  .empty { color: #8a7663; text-align: center; padding: 20px; }
+  #preview { max-width: 150px; max-height: 200px; border-radius: 8px; margin-top: 8px; display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🧥 پنل مدیریت فروشگاه</h1>
+  <a href="/" target="_blank">مشاهده فروشگاه ←</a>
+</header>
+<main>
+  <div id="msg"></div>
+
+  <div class="card">
+    <h2 id="formTitle">➕ افزودن لباس جدید</h2>
+    <form id="productForm">
+      <div class="row">
+        <div>
+          <label for="name">نام لباس *</label>
+          <input type="text" id="name" required placeholder="مثلاً تیشرت سفید">
+        </div>
+        <div>
+          <label for="color">رنگ</label>
+          <input type="text" id="color" placeholder="مثلاً سفید">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="price">قیمت (تومان)</label>
+          <input type="text" id="price" placeholder="مثلاً ۸۵۰۰۰۰">
+        </div>
+        <div>
+          <label for="hex">کد رنگ</label>
+          <input type="color" id="hex" value="#888888">
+          <span class="hint">رنگ دایره‌ای که کنار لباس نشان داده می‌شود</span>
+        </div>
+      </div>
+      <label for="group">گروه (اختیاری)</label>
+      <input type="text" id="group" placeholder="خالی بگذار">
+      <div class="hint">اگه چند رنگ از یه مدل لباس داری، برای همه‌شون یه گروه یکسان بنویس (مثلاً its-us-tee) تا توی فروشگاه با هم نمایش داده بشن و مشتری رنگ رو انتخاب کنه.</div>
+      <label for="image">عکس لباس <span id="imageReq">*</span></label>
+      <input type="file" id="image" accept="image/png,image/jpeg,image/webp,image/gif">
+      <div class="hint">عکس بهتره روی پس‌زمینه ساده و به صورت عمودی باشه. برای لباس جدید عکس لازم است؛ موقع ویرایش اگه عکس جدید انتخاب نکنی، عکس قبلی می‌مونه.</div>
+      <img id="preview" alt="">
+      <div>
+        <button class="btn" type="submit" id="submitBtn">اضافه کن</button>
+        <button class="btn btn-light" type="button" id="cancelBtn" style="display:none">لغو ویرایش</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>👕 لباس‌های فروشگاه (<span id="count">۰</span>)</h2>
+    <div id="list"><div class="empty">در حال بارگذاری…</div></div>
+  </div>
+
+  <p class="hint" style="text-align:center">تغییرات همین‌جا ذخیره می‌شه و بلافاصله توی فروشگاه دیده می‌شه. برای دیدن تغییر، صفحه فروشگاه رو رفرش کن.</p>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const faNum = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+let editingId = null;
+
+function showMsg(text, ok) {
+  const m = $('msg');
+  m.textContent = text;
+  m.className = ok ? 'ok' : 'err';
+  setTimeout(() => { m.className = ''; m.textContent = ''; }, 5000);
+}
+
+async function loadProducts() {
+  try {
+    const res = await fetch('/api/products');
+    const products = await res.json();
+    $('count').textContent = faNum(products.length);
+    const list = $('list');
+    if (!products.length) { list.innerHTML = '<div class="empty">هنوز لباسی نیست.</div>'; return; }
+    list.innerHTML = '';
+    products.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'product';
+      const img = '/_next/image?url=' + encodeURIComponent('/products/' + p.id + '-front.webp') + '&w=256';
+      div.innerHTML =
+        '<img src="' + img + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+        '<div class="info"><div class="name"></div>' +
+        '<div class="meta"><span class="swatch" style="background:' + (p.hex || '#888') + '"></span> ' +
+        '<span class="color"></span> · <span class="price"></span>' +
+        (p.group ? ' · گروه: <span class="group"></span>' : '') + '</div></div>' +
+        '<div class="actions">' +
+        '<button class="btn btn-light btn-small edit">ویرایش</button>' +
+        '<button class="btn btn-danger btn-small del">حذف</button></div>';
+      div.querySelector('.name').textContent = p.name;
+      div.querySelector('.color').textContent = p.color || '—';
+      div.querySelector('.price').textContent = p.price ? ('قیمت: ' + p.price + ' تومان') : 'بدون قیمت';
+      if (p.group) div.querySelector('.group').textContent = p.group;
+      div.querySelector('.edit').onclick = () => startEdit(p);
+      div.querySelector('.del').onclick = () => deleteProduct(p);
+      list.appendChild(div);
+    });
+  } catch (e) {
+    $('list').innerHTML = '<div class="empty">خطا در بارگذاری لباس‌ها.</div>';
+  }
+}
+
+function startEdit(p) {
+  editingId = p.id;
+  $('formTitle').textContent = '✏️ ویرایش: ' + p.name;
+  $('name').value = p.name;
+  $('color').value = p.color || '';
+  $('price').value = p.price || '';
+  $('hex').value = p.hex || '#888888';
+  $('group').value = p.group || '';
+  $('image').value = '';
+  $('imageReq').textContent = '(اختیاری)';
+  $('submitBtn').textContent = 'ذخیره تغییرات';
+  $('cancelBtn').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelEdit() {
+  editingId = null;
+  $('formTitle').textContent = '➕ افزودن لباس جدید';
+  $('productForm').reset();
+  $('hex').value = '#888888';
+  $('imageReq').textContent = '*';
+  $('submitBtn').textContent = 'اضافه کن';
+  $('cancelBtn').style.display = 'none';
+  $('preview').style.display = 'none';
+}
+
+async function deleteProduct(p) {
+  if (!confirm('لباس «' + p.name + '» حذف بشه؟')) return;
+  const res = await fetch('/api/products/' + encodeURIComponent(p.id), { method: 'DELETE' });
+  if (res.ok) { showMsg('حذف شد.', true); loadProducts(); }
+  else showMsg('خطا در حذف.', false);
+}
+
+async function uploadImage(file) {
+  const fd = new FormData();
+  fd.append('image', file);
+  const res = await fetch('/api/upload', { method: 'POST', body: fd });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'upload failed');
+  return data.upload;
+}
+
+$('productForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'در حال ذخیره…';
+  try {
+    let upload = null;
+    const file = $('image').files[0];
+    if (file) upload = await uploadImage(file);
+    const body = {
+      name: $('name').value.trim(),
+      color: $('color').value.trim(),
+      hex: $('hex').value,
+      price: $('price').value.trim(),
+      group: $('group').value.trim()
+    };
+    if (upload) body.upload = upload;
+    let res;
+    if (editingId) {
+      res = await fetch('/api/products/' + encodeURIComponent(editingId), {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+    } else {
+      if (!upload) throw new Error('برای لباس جدید باید عکس انتخاب کنی.');
+      res = await fetch('/api/products', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'خطا');
+    showMsg(editingId ? 'تغییرات ذخیره شد.' : 'لباس جدید اضافه شد.', true);
+    cancelEdit();
+    loadProducts();
+  } catch (err) {
+    showMsg('خطا: ' + err.message, false);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = editingId ? 'ذخیره تغییرات' : 'اضافه کن';
+  }
+});
+
+$('cancelBtn').addEventListener('click', cancelEdit);
+
+$('image').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) { $('preview').style.display = 'none'; return; }
+  $('preview').src = URL.createObjectURL(file);
+  $('preview').style.display = 'block';
+});
+
+loadProducts();
+</script>
+</body>
+</html>
