@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="vJPt9G_variable HHuUba_variable h-full antialiased">
+<html lang="fa" dir="rtl" class="vJPt9G_variable HHuUba_variable h-full antialiased">
 
 <head>
     <meta charSet="utf-8" />
@@ -7,6 +7,16 @@
      like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=675bb962-a914-4794-8b61-dd495eb2f297
      Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /* Vazirmatn for Persian text (local file, works offline) */
+      @font-face{font-family:'Vazirmatn';src:url('/fonts/Vazirmatn.ttf') format('truetype');font-display:swap}
+      /* override the site's Latin font variables with Vazirmatn */
+      :root{--font-sans:'Vazirmatn',Tahoma,Arial,sans-serif;--font-display:'Vazirmatn',Tahoma,Arial,sans-serif;--font-archivo:'Vazirmatn',Tahoma,Arial,sans-serif;--font-archivo-black:'Vazirmatn',Tahoma,Arial,sans-serif}
+      html,body{font-family:'Vazirmatn',Tahoma,Arial,sans-serif}
+      /* letter-spacing breaks Persian letter-joining, so turn it off */
+      *{letter-spacing:normal!important}
+    </style>
+
     <link rel="preload" as="image" imageSrcSet="/_next/image?url=%2Fsnug-wrld-logo.png&amp;w=256&amp;q=75 1x, /_next/image?url=%2Fsnug-wrld-logo.png&amp;w=384&amp;q=75 2x" />
     <link rel="preload" as="image" imageSrcSet="/_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=32&amp;q=75 32w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=48&amp;q=75 48w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=64&amp;q=75 64w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=96&amp;q=75 96w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=128&amp;q=75 128w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=256&amp;q=75 256w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fproducts%2Fcrimson-memory-side.webp&amp;w=3840&amp;q=75 3840w"
         imageSizes="36vh" />
@@ -45,7 +55,7 @@
         imageSizes="41vh" />
     <meta name="next-size-adjust" content="" />
     <title>Snug Wrld</title>
-    <meta name="description" content="It&#x27;s us, never them." />
+    <meta name="description" content="ما هستیم، نه اونا." />
     <link rel="icon" href="/favicon.ico?favicon.117ezoe8m31dk.ico" sizes="48x48" type="image/x-icon" />
     <script src="/_next/static/chunks/0cz1d0mv5g_q7.js" noModule=""></script>
 </head>
@@ -57,11 +67,11 @@
     </div>
     <!--&-->
     <div class="wall relative h-dvh w-full overflow-hidden">
-        <header class="absolute inset-x-0 top-0 z-50 grid h-[10.4vh] min-h-[64px] grid-cols-[1fr_auto_1fr] items-center px-[2.2vw]"><a href="#about" class="text-[12px] font-medium uppercase tracking-[0.08em] text-ink transition-opacity duration-300 opacity-100 justify-self-start">About</a><img alt="Snug Wrld" width="134" height="72" decoding="async" data-nimg="1" class="transition-opacity duration-300 opacity-100"
+        <header class="absolute inset-x-0 top-0 z-50 grid h-[10.4vh] min-h-[64px] grid-cols-[1fr_auto_1fr] items-center px-[2.2vw]"><a href="#about" class="text-[12px] font-medium uppercase tracking-[0.08em] text-ink transition-opacity duration-300 opacity-100 justify-self-start">درباره ما</a><img alt="Snug Wrld" width="134" height="72" decoding="async" data-nimg="1" class="transition-opacity duration-300 opacity-100"
                 style="color:transparent;height:36px;width:auto" srcSet="/_next/image?url=%2Fsnug-wrld-logo.png&amp;w=256&amp;q=75 1x, /_next/image?url=%2Fsnug-wrld-logo.png&amp;w=384&amp;q=75 2x" src="/_next/image?url=%2Fsnug-wrld-logo.png&amp;w=384&amp;q=75"
             />
-            <div class="relative justify-self-end"><a href="#contact" class="text-[12px] font-medium uppercase tracking-[0.08em] text-ink transition-opacity duration-300 opacity-100 block">Contact</a><button type="button" class="text-[12px] font-medium uppercase tracking-[0.08em] text-ink transition-opacity duration-300 absolute right-0 top-1/2 flex -translate-y-1/2 items-center gap-[10px] whitespace-nowrap pointer-events-none opacity-0"
-                    tabindex="-1" aria-hidden="true" aria-label="Close detail view" style="min-height:48px;min-width:48px;justify-content:flex-end">Close <span aria-hidden="true" class="text-[13px] font-semibold">✕</span></button></div>
+            <div class="relative justify-self-end"><a href="#contact" class="text-[12px] font-medium uppercase tracking-[0.08em] text-ink transition-opacity duration-300 opacity-100 block">تماس</a><button type="button" class="text-[12px] font-medium uppercase tracking-[0.08em] text-ink transition-opacity duration-300 absolute right-0 top-1/2 flex -translate-y-1/2 items-center gap-[10px] whitespace-nowrap pointer-events-none opacity-0"
+                    tabindex="-1" aria-hidden="true" aria-label="بستن نمای جزئیات" style="min-height:48px;min-width:48px;justify-content:flex-end">بستن <span aria-hidden="true" class="text-[13px] font-semibold">✕</span></button></div>
         </header>
         <main>
             <h1 class="sr-only">Snug Wrld</h1>
@@ -309,18 +319,18 @@
                             </div>
                         </div>
                     </div>
-                    <p class="rack-caption" style="--i:-3;--hem:1.3848559555146;opacity:0" aria-hidden="true">Crimson Memory LS Shirt — White</p>
-                    <p class="rack-caption" style="--i:-2;--hem:1.3848559555146;opacity:0" aria-hidden="true">It&#x27;s Us Never Them Tee — Black</p>
-                    <p class="rack-caption" style="--i:-1;--hem:1.3848559555146;opacity:0" aria-hidden="true">Distressed Painted Logo Tank Top — Black</p>
-                    <p class="rack-caption" style="--i:0;--hem:1.3848559555146;opacity:0" aria-hidden="true">Snug Wrld Logo Varsity Jacket — Black</p>
-                    <p class="rack-caption" style="--i:1;--hem:1.3848559555146;opacity:0" aria-hidden="true">Distressed Logo Print T-Shirt — Blue</p>
-                    <p class="rack-caption" style="--i:2;--hem:1.3848559555146;opacity:0" aria-hidden="true">Snug Football Jersey — Yellow</p>
-                    <p class="rack-caption" style="--i:3;--hem:1.3848559555146;opacity:0" aria-hidden="true">Silicone Logo Print T-Shirt — White</p>
+                    <p class="rack-caption" style="--i:-3;--hem:1.3848559555146;opacity:0" aria-hidden="true">Crimson Memory LS Shirt — سفید</p>
+                    <p class="rack-caption" style="--i:-2;--hem:1.3848559555146;opacity:0" aria-hidden="true">It&#x27;s Us Never Them Tee — مشکی</p>
+                    <p class="rack-caption" style="--i:-1;--hem:1.3848559555146;opacity:0" aria-hidden="true">Distressed Painted Logo Tank Top — مشکی</p>
+                    <p class="rack-caption" style="--i:0;--hem:1.3848559555146;opacity:0" aria-hidden="true">Snug Wrld Logo Varsity Jacket — مشکی</p>
+                    <p class="rack-caption" style="--i:1;--hem:1.3848559555146;opacity:0" aria-hidden="true">Distressed Logo Print T-Shirt — آبی</p>
+                    <p class="rack-caption" style="--i:2;--hem:1.3848559555146;opacity:0" aria-hidden="true">Snug Football Jersey — زرد</p>
+                    <p class="rack-caption" style="--i:3;--hem:1.3848559555146;opacity:0" aria-hidden="true">Silicone Logo Print T-Shirt — سفید</p>
                 </div>
-            </div><a href="https://aradazr.site/" target="_blank" rel="noopener" class="absolute left-1/2 top-[90%] z-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-ink px-[19px] py-[5px] text-[12px] font-medium uppercase tracking-[0.04em] text-ink transition-opacity duration-300 opacity-100">See Availability</a></main>
+            </div><a href="https://aradazr.site/" target="_blank" rel="noopener" class="absolute left-1/2 top-[90%] z-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-ink px-[19px] py-[5px] text-[12px] font-medium uppercase tracking-[0.04em] text-ink transition-opacity duration-300 opacity-100">مشاهده موجودی</a></main>
         <div
-            class="absolute inset-x-0 bottom-0 z-30 flex h-[4.3vh] min-h-[32px] items-center overflow-hidden bg-brand text-[14px] font-bold uppercase italic tracking-[0.06em] text-brand-ink" aria-label="It&#x27;s us, never them. New drops. Lagos.">
-            <div class="marquee-track" aria-hidden="true"><span>IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  </span><span>IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  IT&#x27;S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  </span></div>
+            class="absolute inset-x-0 bottom-0 z-30 flex h-[4.3vh] min-h-[32px] items-center overflow-hidden bg-brand text-[14px] font-bold uppercase italic tracking-[0.06em] text-brand-ink" aria-label="ما هستیم، نه اونا. New drops. Lagos.">
+            <div class="marquee-track" aria-hidden="true"><span>ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  </span><span>ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  </span></div>
     </div>
     </div>
     <!--$-->
