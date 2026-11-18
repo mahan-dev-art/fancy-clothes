@@ -1,4 +1,4 @@
-# Snug Wrld store — deploy on Deplexo
+# Delta Shop store — deploy on Deplexo
 # No pip dependencies: serve.py uses only the Python standard library,
 # so there is nothing to install. The image stays small on purpose
 # (Deplexo free plan: ~128 MB RAM, ~250 MB disk).
