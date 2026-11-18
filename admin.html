@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>پنل مدیریت فروشگاه</title>
+<title>پنل مدیریت دلتا شاپ</title>
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; font-family: Tahoma, sans-serif; background: #f5efe8; color: #2b2118; }
@@ -36,12 +36,21 @@
   .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid #ccc; vertical-align: -2px; margin-left: 4px; }
   .product .actions { white-space: nowrap; }
   .empty { color: #8a7663; text-align: center; padding: 20px; }
+  .order { background: #fff; border: 1px solid #e3d8cb; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  .order .head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .order .num { font-weight: bold; font-size: 15px; }
+  .order .date { font-size: 12px; color: #8a7663; }
+  .order .cust { font-size: 14px; margin-top: 8px; line-height: 1.9; }
+  .order .items { font-size: 13px; color: #6b5847; margin-top: 6px; line-height: 1.9; }
+  .order .total { font-weight: bold; margin-top: 6px; }
+  .order select { padding: 8px; border: 1px solid #d8cbb9; border-radius: 8px; font-family: Tahoma, sans-serif; font-size: 13px; background: #fffdf9; }
+  .order .actions { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
   #preview { max-width: 150px; max-height: 200px; border-radius: 8px; margin-top: 8px; display: none; }
 </style>
 </head>
 <body>
 <header>
-  <h1>🧥 پنل مدیریت فروشگاه</h1>
+  <h1>🧥 پنل مدیریت دلتا شاپ</h1>
   <a href="/" target="_blank">مشاهده فروشگاه ←</a>
 </header>
 <main>
@@ -88,6 +97,11 @@
   <div class="card">
     <h2>👕 لباس‌های فروشگاه (<span id="count">۰</span>)</h2>
     <div id="list"><div class="empty">در حال بارگذاری…</div></div>
+  </div>
+
+  <div class="card">
+    <h2>📦 سفارش‌ها (<span id="orderCount">۰</span>)</h2>
+    <div id="orders"><div class="empty">در حال بارگذاری…</div></div>
   </div>
 
   <p class="hint" style="text-align:center">تغییرات همین‌جا ذخیره می‌شه و بلافاصله توی فروشگاه دیده می‌شه. برای دیدن تغییر، صفحه فروشگاه رو رفرش کن.</p>
@@ -169,7 +183,6 @@ async function deleteProduct(p) {
   if (!confirm('لباس «' + p.name + '» حذف بشه؟')) return;
   const res = await fetch('/api/products/' + encodeURIComponent(p.id), { method: 'DELETE' });
   if (res.ok) { showMsg('حذف شد.', true); loadProducts(); }
-  else showMsg('خطا در حذف.', false);
 }
 
 async function uploadImage(file) {
@@ -231,7 +244,80 @@ $('image').addEventListener('change', e => {
   $('preview').style.display = 'block';
 });
 
+/* ---- orders ---- */
+const STATUS_FA = { new: 'جدید', confirmed: 'تاییدشده', shipped: 'ارسال‌شده' };
+
+function orderTotalText(o) {
+  if (o.has_unpriced && !o.total) return 'قیمت پس از تماس اعلام می‌شود';
+  const t = o.total ? faNum(o.total) + ' تومان' : '—';
+  return o.has_unpriced ? t + ' (+ اقلام بدون قیمت)' : t;
+}
+
+async function loadOrders() {
+  try {
+    const res = await fetch('/api/orders');
+    const orders = await res.json();
+    $('orderCount').textContent = faNum(orders.length);
+    const box = $('orders');
+    if (!orders.length) { box.innerHTML = '<div class="empty">هنوز سفارشی ثبت نشده.</div>'; return; }
+    box.innerHTML = '';
+    orders.slice().reverse().forEach(o => {
+      const div = document.createElement('div');
+      div.className = 'order';
+      const itemsHtml = o.items.map(it =>
+        '<div>• <span class="iname"></span> × ' + faNum(it.qty) +
+        ' — <span class="icol"></span>، سایز ' + escHtml(it.size || '—') +
+        ' — ' + (it.price != null ? faNum(it.price * it.qty) + ' تومان' : 'تماس بگیرید') + '</div>'
+      ).join('');
+      div.innerHTML =
+        '<div class="head"><span class="num">سفارش ' + escHtml(o.number) + '</span>' +
+        '<span class="date">' + escHtml(o.created_at || '') + '</span></div>' +
+        '<div class="cust"><b class="cname"></b> · <span class="cphone"></span><br>' +
+        '<span class="caddr"></span>' +
+        (o.customer.notes ? '<br>توضیحات: <span class="cnotes"></span>' : '') + '</div>' +
+        '<div class="items">' + itemsHtml + '</div>' +
+        '<div class="total">جمع: ' + escHtml(orderTotalText(o)) + '</div>' +
+        '<div class="actions"><label>وضعیت:</label>' +
+        '<select class="status">' +
+        Object.keys(STATUS_FA).map(s =>
+          '<option value="' + s + '"' + (o.status === s ? ' selected' : '') + '>' + STATUS_FA[s] + '</option>'
+        ).join('') +
+        '</select>' +
+        '<button class="btn btn-danger btn-small del-order">حذف سفارش</button></div>';
+      div.querySelector('.cname').textContent = o.customer.name;
+      div.querySelector('.cphone').textContent = o.customer.phone;
+      div.querySelector('.caddr').textContent = o.customer.address;
+      if (o.customer.notes) div.querySelector('.cnotes').textContent = o.customer.notes;
+      div.querySelectorAll('.iname').forEach((el, i) => { el.textContent = o.items[i].name; });
+      div.querySelectorAll('.icol').forEach((el, i) => { el.textContent = 'رنگ ' + (o.items[i].color || '—'); });
+      div.querySelector('.status').onchange = async e => {
+        const res = await fetch('/api/orders/' + encodeURIComponent(o.number), {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: e.target.value })
+        });
+        if (res.ok) showMsg('وضعیت سفارش ' + o.number + ' عوض شد.', true);
+        else showMsg('خطا در تغییر وضعیت.', false);
+      };
+      div.querySelector('.del-order').onclick = async () => {
+        if (!confirm('سفارش ' + o.number + ' حذف بشه؟')) return;
+        const res = await fetch('/api/orders/' + encodeURIComponent(o.number), { method: 'DELETE' });
+        if (res.ok) { showMsg('سفارش حذف شد.', true); loadOrders(); }
+        else showMsg('خطا در حذف سفارش.', false);
+      };
+      box.appendChild(div);
+    });
+  } catch (e) {
+    $('orders').innerHTML = '<div class="empty">خطا در بارگذاری سفارش‌ها.</div>';
+  }
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 loadProducts();
+loadOrders();
 </script>
 </body>
 </html>
