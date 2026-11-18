@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Serve the saved snugwrld.netlify.app copy locally + admin panel.
 
+The storefront is Persian (site/fa.html, RTL, Vazirmatn) and is served at
+"/" -- it shows each product's price from products.json (in تومان) when one
+is set. The original rack page was also translated to Persian in place
+(site/index.html + translated UI strings in the JS) and is served at "/rack".
 The saved copy stores Next.js optimized images under hashed filenames, so
 /_next/image?url=... requests are mapped back to those files here.
 
@@ -39,6 +43,75 @@ PRODUCTS_FILE = os.path.join(BASE, "products.json")
 UPLOADS_DIR = os.path.join(ROOT, "uploads")     # uploaded product pictures
 ADMIN_FILE = os.path.join(BASE, "admin.html")
 CHECKOUT_BASE = "https://checkout.snugwrld.com/products/"
+
+# ---------------------------------------------------------------------------
+# Persian storefront: colours + UI strings are translated when the shop page
+# is served (products.json itself keeps the English names -- see below).
+# ---------------------------------------------------------------------------
+# Colour names in products.json are English ("White", "Black", ...). The shop
+# shows them in Persian; anything not in this list is shown as-is, so a
+# Persian colour typed in the admin panel also works.
+COLOR_FA = {
+    "White": "سفید", "Black": "مشکی", "Blue": "آبی",
+    "Yellow": "زرد", "Sand": "شنی", "Pink": "صورتی",
+}
+
+
+def fa_color(color):
+    """English colour name -> Persian, or the original text if unknown."""
+    return COLOR_FA.get((color or "").strip(), color or "")
+
+
+# User-visible English strings inside the shop's JavaScript file, translated
+# to Persian. Each pair is (English, Persian) as plain text.
+# Brand names ("Snug Wrld", product names) are deliberately NOT in this list.
+# Most appear as double-quoted literals; two are `backtick` template literals
+# (listed separately) -- note the file uses plain apostrophes inside its
+# double-quoted strings (e.g. "IT'S US..."), so do NOT escape them.
+UI_STRINGS_FA = [
+    ("See Availability", "مشاهده موجودی"),
+    ("SEE AVAILABILITY ↗", "مشاهده موجودی ↗"),
+    ("Close detail view", "بستن نمای جزئیات"),
+    ("Close ", "بستن "),
+    ("About", "درباره ما"),
+    ("Contact", "تماس"),
+    ("Next piece", "آیتم بعدی"),
+    ("Previous piece", "آیتم قبلی"),
+    ("Show front or back", "نمایش جلو یا پشت"),
+    ("IT'S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  ",
+     "ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  "),
+    ("It's us, never them. New drops. Lagos.",
+     "ما هستیم، نه اونا. کالکشن‌های جدید. لاگوس."),
+]
+UI_TEMPLATE_STRINGS_FA = [
+    ("See availability of ${t} (opens in a new tab)",
+     "مشاهده موجودی ${t} (در تب جدید باز می‌شود)"),
+    ("Colour: ${t.label}", "رنگ: ${t.label}"),
+]
+
+
+def _js_double_quoted(text):
+    """Wrap text the way it appears as a double-quoted JS string literal."""
+    return '"' + text.replace('"', '\\"') + '"'
+
+
+def translate_ui_strings(text):
+    """Replace the shop's English UI strings with Persian ones (in memory).
+
+    Only exact string literals are replaced, so code identifiers (e.g. the
+    DOM property "Size") are never touched. A string that is not found is
+    simply skipped -- the page still serves.
+    """
+    for english, persian in UI_STRINGS_FA:
+        old = _js_double_quoted(english)
+        if old in text:
+            text = text.replace(old, _js_double_quoted(persian))
+    for english, persian in UI_TEMPLATE_STRINGS_FA:
+        old = "`" + english + "`"
+        if old in text:
+            text = text.replace(old, "`" + persian + "`")
+    return text
+
 
 # ---------------------------------------------------------------------------
 # Products: load / save products.json
@@ -257,13 +330,13 @@ def build_product_list_js(products):
         name = json.dumps(first["name"], ensure_ascii=False)
         url = json.dumps(CHECKOUT_BASE + (first.get("url") or first["id"]), ensure_ascii=False)
         if len(items) == 1:
-            colour = json.dumps(first.get("color") or "", ensure_ascii=False)
+            colour = json.dumps(fa_color(first.get("color")), ensure_ascii=False)
             parts.append('ou(%s, %s, %s, %s)' % (
                 json.dumps(first["id"], ensure_ascii=False), name, colour, url))
         else:
             variants = ", ".join(
                 '[%s, %s, %s]' % (
-                    json.dumps(it.get("color") or "", ensure_ascii=False),
+                    json.dumps(fa_color(it.get("color")), ensure_ascii=False),
                     json.dumps(it.get("hex") or "#888888", ensure_ascii=False),
                     json.dumps(it["id"], ensure_ascii=False))
                 for it in items)
@@ -303,6 +376,9 @@ def patch_shop_js(data):
     else:
         return data
     text = text[:start] + "op = [" + build_product_list_js(products) + "]" + text[k + 1:]
+
+    # 1b. Translate the shop's English UI strings to Persian (in memory only).
+    text = translate_ui_strings(text)
 
     # 2. Add image measurements for uploaded pictures (front/side/back views).
     #    Remove any old entry for the same image first, then add the new one.
@@ -451,6 +527,20 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
         path = parsed.path
+        if path in ("/", "/index.html"):
+            # Persian storefront (RTL, Vazirmatn) -- the shop's home page.
+            try:
+                with open(os.path.join(ROOT, "fa.html"), "rb") as f:
+                    return self._send_bytes(f.read(), "text/html; charset=utf-8")
+            except OSError:
+                pass  # fall through to the old English export
+        if path == "/rack":
+            # The original rack page, translated to Persian in place.
+            try:
+                with open(os.path.join(ROOT, "index.html"), "rb") as f:
+                    return self._send_bytes(f.read(), "text/html; charset=utf-8")
+            except OSError:
+                return self.send_error(404)
         if path == "/api/products":
             return self._api_products(None)
         if path.startswith("/api/products/"):
