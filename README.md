@@ -1,8 +1,8 @@
-# Fancy Clothes 👕
+# Delta Shop 👕
 
 <div dir="rtl">
 
-یه سایت فروشگاه لباس با یه رگال لباس متحرک. روی هر لباس که کلیک کنی، بزرگ می‌شه و جزئیاتش رو نشون می‌ده.
+یه سایت فروشگاه لباس با یه رگال لباس متحرک. روی هر لباس که کلیک کنی، بزرگ می‌شه و جزئیاتش رو نشون می‌ده. اسم فروشگاه **دلتا شاپ** است و ظاهرش تیره و شیک است (پس‌زمینه ذغالی، متن روشن، تأکید طلایی).
 
 صفحهٔ فروشگاه به **فارسی و راست‌چین** است (فونت وزیرمتن)؛ اسم لباس‌ها چون اسم برنده، انگلیسی مونده.
 
@@ -45,12 +45,18 @@
    - **لباس جدید اضافه کنی:** نام، رنگ، قیمت و عکس رو بده و «اضافه کن» رو بزن.
    - **ویرایش کنی:** روی «ویرایش» بزن، چیزی که می‌خوای رو عوض کن و «ذخیره تغییرات» رو بزن. اگه عکس جدید انتخاب نکنی، عکس قبلی می‌مونه.
    - **حذف کنی:** روی «حذف» بزن.
+   - **سفارش‌ها رو ببینی:** پایین همون صفحه، لیست سفارش‌ها با شماره سفارش، مشتری، اقلام و جمع هست؛ وضعیت هر سفارش را می‌توانی عوض کنی یا سفارش را حذف کنی.
 
 همه لباس‌ها توی فایل **`products.json`** ذخیره می‌شن و تغییرات بلافاصله توی فروشگاه دیده می‌شه (صفحه فروشگاه رو رفرش کن). عکس‌هایی که آپلود می‌کنی توی پوشه `site/uploads/` ذخیره می‌شن.
 
+## سبد خرید و ثبت سفارش
+
+مشتری لباس، رنگ و سایز را انتخاب می‌کند و با دکمهٔ «افزودن به سبد» به سبد خرید اضافه‌اش می‌کند. سبد در مرورگر ذخیره می‌شود (تعداد و جمع کل به تومان با عدد فارسی). با «ثبت سفارش»، نام، شماره تماس و آدرس را می‌نویسد و سفارش با یک **شماره سفارش** ثبت می‌شود؛ همهٔ سفارش‌ها را می‌توانی در پنل مدیریت ببینی و وضعیت‌شان را عوض کنی (جدید / تاییدشده / ارسال‌شده).
+
 | نکته | توضیح |
 |---|---|
-| قیمت | قیمت‌ها فعلاً فقط توی پنل مدیریت نگه داشته می‌شن و روی صفحه فروشگاه نمایش داده نمی‌شن. |
+| قیمت | قیمت هر لباس را در پنل مدیریت وارد کن تا روی صفحه فروشگاه نمایش داده شود. اگر قیمت لباسی وارد نشده باشد، به‌جای عدد «تماس بگیرید» نشان داده می‌شود و قیمت آن پس از ثبت سفارش اعلام می‌شود. |
+| هزینه ارسال | هزینه ارسال پس از ثبت سفارش اعلام می‌شود؛ در سایت عددی برای آن ساخته نشده است. |
 | گروه | اگه چند رنگ از یه مدل لباس داری، برای همه‌شون یه «گروه» یکسان بنویس تا توی فروشگاه با هم نمایش داده بشن و مشتری رنگ رو انتخاب کنه. |
 | عکس | عکس بهتره روی پس‌زمینه ساده و به صورت عمودی باشه (PNG یا JPG). |
 
@@ -92,7 +98,7 @@ python3 serve.py
 
 ## English
 
-A clothing store website with an animated clothes rack. Click any item to see it up close.
+A clothing store website with an animated clothes rack. Click any item to see it up close. The shop is called **Delta Shop** and has a dark, chic look. Customers add items (colour + size) to a cart and place an order from inside the shop; orders are listed in the admin panel.
 
 ### How to run it (3 steps)
 
@@ -121,6 +127,8 @@ python3 serve.py
 |---|---|
 | `site/` | The website itself |
 | `products.json` | The list of products (name, colour, price, pictures). Edit it from the admin panel — no code changes needed. |
+| `orders.json` | Orders placed from the shop (created by the server, managed from the admin panel). |
+| `site/cart.js` | The shared cart + checkout (used by the home page and the rack view). |
 | `admin.html` | The admin panel page, served at `/admin` |
 | `serve.py` | A tiny local server that runs the site. Nothing to install: it only needs Python. It also serves the admin panel and its API. |
 | `start-mac.command` | Double-click to run on Mac |
