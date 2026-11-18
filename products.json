@@ -79,7 +79,7 @@
   },
   {
     "id": "varsity",
-    "name": "Snug Wrld Logo Varsity Jacket",
+    "name": "Delta Shop Logo Varsity Jacket",
     "color": "Black",
     "hex": "#1e1e1e",
     "price": "",
@@ -105,7 +105,7 @@
   },
   {
     "id": "jersey-yellow",
-    "name": "Snug Football Jersey",
+    "name": "Delta Shop Football Jersey",
     "color": "Yellow",
     "hex": "#e3ca1e",
     "price": "",
@@ -118,7 +118,7 @@
   },
   {
     "id": "jersey-blue",
-    "name": "Snug Football Jersey",
+    "name": "Delta Shop Football Jersey",
     "color": "Blue",
     "hex": "#0842a9",
     "price": "",
