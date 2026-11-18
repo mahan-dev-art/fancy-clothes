@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اسناگ ورلد | فروشگاه لباس</title>
+<meta name="description" content="فروشگاه رسمی اسناگ ورلد — کالکشن تازه لباس، رنگ‌ها و قیمت‌ها">
+<style>
+  @font-face {
+    font-family: "Vazirmatn";
+    src: url("/fonts/Vazirmatn.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, sans-serif;
+    background: #f7f2ea;
+    color: #241a12;
+    line-height: 1.8;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; }
+
+  /* -- header -- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(247, 242, 234, 0.94);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid #e3d8cb;
+  }
+  .header-inner {
+    max-width: 1100px; margin: 0 auto; padding: 12px 20px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand img { height: 36px; width: auto; display: block; }
+  .brand span { font-weight: 700; font-size: 20px; letter-spacing: 0.01em; }
+  nav { margin-inline-start: auto; display: flex; gap: 22px; }
+  nav a { text-decoration: none; font-size: 15px; color: #5a4636; }
+  nav a:hover { color: #241a12; }
+
+  /* -- hero -- */
+  .hero { text-align: center; padding: 56px 20px 40px; }
+  .hero h1 { margin: 0; font-size: clamp(34px, 6vw, 56px); line-height: 1.3; }
+  .hero p { margin: 10px auto 0; max-width: 560px; color: #6b5847; font-size: 17px; }
+
+  /* -- marquee -- */
+  .marquee {
+    overflow: hidden; white-space: nowrap;
+    background: #241a12; color: #f7f2ea;
+    padding: 10px 0; font-size: 15px; font-weight: 700; letter-spacing: 0.02em;
+  }
+  .marquee span { display: inline-block; padding-inline-start: 0; animation: slide 22s linear infinite; }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(50%); } }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 36px 20px 20px; }
+  h2 { font-size: 24px; margin: 0 0 6px; }
+  .section-sub { color: #6b5847; margin: 0 0 24px; font-size: 15px; }
+
+  /* -- product grid -- */
+  .grid {
+    display: grid; gap: 22px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  .card {
+    background: #fffdf9; border: 1px solid #e3d8cb; border-radius: 16px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .card .pic { background: #efe6da; aspect-ratio: 4 / 5; overflow: hidden; }
+  .card .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card h3 { margin: 0; font-size: 17px; line-height: 1.5; }
+  .card .color-line { font-size: 14px; color: #6b5847; margin: 0; }
+  .swatches { display: flex; gap: 8px; align-items: center; min-height: 24px; }
+  .swatch {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 2px solid #fff; outline: 1px solid #cbbfae;
+    cursor: pointer; padding: 0;
+  }
+  .swatch[aria-pressed="true"] { outline: 2px solid #241a12; }
+  .price { font-size: 18px; font-weight: 700; color: #241a12; margin: 0; }
+  .price small { font-size: 13px; font-weight: 400; color: #6b5847; }
+  .btn {
+    display: block; text-align: center; text-decoration: none;
+    background: #3b2a1e; color: #fff; border-radius: 999px;
+    padding: 10px 18px; font-size: 15px; margin-top: auto;
+  }
+  .btn:hover { background: #5a4230; }
+  .empty, .error { text-align: center; color: #6b5847; padding: 40px 0; }
+
+  /* -- about / contact -- */
+  .info { display: grid; gap: 22px; grid-template-columns: 1fr 1fr; margin-top: 56px; }
+  @media (max-width: 640px) { .info { grid-template-columns: 1fr; } }
+  .info section {
+    background: #fffdf9; border: 1px solid #e3d8cb; border-radius: 16px; padding: 22px;
+  }
+  .info p { margin: 0; color: #4c3d2e; font-size: 15px; }
+
+  footer {
+    margin-top: 56px; border-top: 1px solid #e3d8cb;
+    padding: 22px 20px 30px; text-align: center; color: #6b5847; font-size: 14px;
+  }
+  footer a { color: #5a4636; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="brand" href="/">
+      <img src="/_next/image?url=%2Fsnug-wrld-logo.png&amp;w=256&amp;q=75" alt="Snug Wrld">
+      <span>Snug Wrld</span>
+    </a>
+    <nav>
+      <a href="#shop">فروشگاه</a>
+      <a href="#about">درباره ما</a>
+      <a href="#contact">تماس</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>اسناگ ورلد</h1>
+  <p>فروشگاه رسمی اسناگ ورلد — کالکشن تازه؛ هر لباس را ببین، رنگش را انتخاب کن و موجودی‌اش را بررسی کن.</p>
+</section>
+
+<div class="marquee" aria-hidden="true"><span id="marquee-text"></span></div>
+
+<main>
+  <section id="shop">
+    <h2>محصولات</h2>
+    <p class="section-sub">همهٔ لباس‌های کالکشن تازه</p>
+    <div id="grid" class="grid"></div>
+    <p id="status" class="empty">در حال بارگذاری محصولات…</p>
+  </section>
+
+  <div class="info">
+    <section id="about">
+      <h2>درباره ما</h2>
+      <p>اسناگ ورلد یک برند پوشاک است؛ لباس‌هایی ساده، راحت و با هویت خودمان. هر مدل در چند رنگ عرضه می‌شود و می‌توانی رنگ دلخواهت را انتخاب کنی.</p>
+    </section>
+    <section id="contact">
+      <h2>تماس</h2>
+      <p>برای ثبت سفارش، روی دکمهٔ «مشاهده موجودی» هر محصول بزن؛ سفارش و پرداخت از همان‌جا انجام می‌شود.</p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <p>© ۲۰۲۶ اسناگ ورلد — همهٔ حقوق محفوظ است.</p>
+  <p><a href="/rack">نمای کلاسیک رگال</a></p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var CHECKOUT_BASE = "https://checkout.snugwrld.com/products/";
+
+  var COLOR_FA = {
+    "White": "سفید", "Black": "مشکی", "Pink": "صورتی", "Yellow": "زرد",
+    "Blue": "آبی", "Sand": "شنی", "Red": "قرمز", "Green": "سبز",
+    "Grey": "خاکستری", "Gray": "خاکستری", "Beige": "کرم",
+    "Brown": "قهوه‌ای", "Orange": "نارنجی", "Purple": "بنفش"
+  };
+
+  // نوار متحرک بالای فروشگاه
+  var marqueeUnit = "ما هستیم، نه اونا  •  دراپ‌های جدید  •  لاگوس  •  ";
+  document.getElementById("marquee-text").textContent = marqueeUnit.repeat(6);
+
+  function faColor(color) {
+    return COLOR_FA[color] || color || "";
+  }
+
+  function imageUrl(product, width) {
+    return "/_next/image?url=" + encodeURIComponent("/products/" + product.id + "-front.webp")
+      + "&w=" + (width || 640) + "&q=75";
+  }
+
+  // قیمت را فقط وقتی در products.json وارد شده نشان بده؛
+  // اگر خالی بود هیچ چیزی برای قیمت نمایش نده و قیمتی نساز.
+  function formatPrice(price) {
+    var digits = String(price == null ? "" : price).replace(/[^\d]/g, "");
+    if (!digits) return "";
+    var n = Number(digits);
+    if (!isFinite(n)) return "";
+    return n.toLocaleString("fa-IR") + " تومان";
+  }
+
+  function groupProducts(products) {
+    var groups = [], seen = {};
+    products.forEach(function (p) {
+      var key = p.group || p.id;
+      if (seen[key] !== undefined) {
+        groups[seen[key]].push(p);
+      } else {
+        seen[key] = groups.length;
+        groups.push([p]);
+      }
+    });
+    return groups;
+  }
+
+  function renderCard(items) {
+    var first = items[0];
+    var card = document.createElement("article");
+    card.className = "card";
+
+    var pic = document.createElement("div");
+    pic.className = "pic";
+    var img = document.createElement("img");
+    img.alt = first.name;
+    img.loading = "lazy";
+    img.src = imageUrl(first, 640);
+    pic.appendChild(img);
+    card.appendChild(pic);
+
+    var body = document.createElement("div");
+    body.className = "body";
+
+    var title = document.createElement("h3");
+    title.textContent = first.name; // نام محصول همان‌طور که هست می‌ماند
+    body.appendChild(title);
+
+    var colorLine = document.createElement("p");
+    colorLine.className = "color-line";
+    body.appendChild(colorLine);
+
+    var swatches = document.createElement("div");
+    swatches.className = "swatches";
+    body.appendChild(swatches);
+
+    var priceEl = document.createElement("p");
+    priceEl.className = "price";
+    body.appendChild(priceEl);
+
+    var btn = document.createElement("a");
+    btn.className = "btn";
+    btn.target = "_blank";
+    btn.rel = "noopener";
+    btn.textContent = "مشاهده موجودی";
+    body.appendChild(btn);
+
+    var selected = first;
+
+    function select(item) {
+      selected = item;
+      img.src = imageUrl(item, 640);
+      img.alt = item.name;
+      colorLine.textContent = "رنگ: " + faColor(item.color);
+      var price = formatPrice(item.price);
+      if (price) {
+        priceEl.textContent = price;
+        priceEl.style.display = "";
+      } else {
+        priceEl.textContent = "";
+        priceEl.style.display = "none";
+      }
+      btn.href = CHECKOUT_BASE + (item.url || item.id);
+      Array.prototype.forEach.call(swatches.children, function (sw) {
+        sw.setAttribute("aria-pressed", sw.dataset.pid === item.id ? "true" : "false");
+      });
+    }
+
+    items.forEach(function (item) {
+      var sw = document.createElement("button");
+      sw.type = "button";
+      sw.className = "swatch";
+      sw.dataset.pid = item.id;
+      sw.title = faColor(item.color);
+      sw.setAttribute("aria-label", "رنگ " + faColor(item.color));
+      sw.style.background = item.hex || "#888888";
+      sw.addEventListener("click", function () { select(item); });
+      swatches.appendChild(sw);
+    });
+
+    // هاور روی عکس: اگر نمای کناری دارد، آن را نشان بده
+    if (first.image_side) {
+      pic.addEventListener("mouseenter", function () {
+        img.src = "/_next/image?url=" + encodeURIComponent("/products/" + selected.id + "-side.webp") + "&w=640&q=75";
+      });
+      pic.addEventListener("mouseleave", function () {
+        img.src = imageUrl(selected, 640);
+      });
+    }
+
+    select(first);
+    card.appendChild(body);
+    return card;
+  }
+
+  var grid = document.getElementById("grid");
+  var status = document.getElementById("status");
+
+  fetch("/api/products")
+    .then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    })
+    .then(function (products) {
+      if (!products || !products.length) {
+        status.textContent = "هنوز محصولی در فروشگاه ثبت نشده است.";
+        return;
+      }
+      status.style.display = "none";
+      groupProducts(products).forEach(function (items) {
+        grid.appendChild(renderCard(items));
+      });
+    })
+    .catch(function () {
+      status.textContent = "محصولات بارگذاری نشد؛ لطفاً صفحه را دوباره باز کن.";
+      status.className = "error";
+    });
+})();
+</script>
+</body>
+</html>
