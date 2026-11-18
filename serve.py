@@ -19,7 +19,9 @@ How it works (short version):
     for that file, serve.py swaps the built-in product list with the one from
     products.json, and adds image measurements for newly uploaded pictures.
     The files on disk are never changed -- the swap happens in memory only.
-  * Uploaded pictures are saved under site/uploads/ and served like the rest.
+  * Uploaded pictures are saved under site/uploads/ (locally) or under
+    the writable data directory (DATA_DIR -- /data on Deplexo) and
+    served like the rest.
 
 Usage: python3 serve.py [port]   (default 8080)
        PORT=3000 python3 serve.py  -- port from the environment (used by
@@ -31,6 +33,7 @@ import json
 import mimetypes
 import os
 import re
+import shutil
 import struct
 import sys
 import threading
@@ -41,10 +44,80 @@ from urllib.parse import urlparse, parse_qs
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(BASE, "site")               # the shop files
-PRODUCTS_FILE = os.path.join(BASE, "products.json")
-UPLOADS_DIR = os.path.join(ROOT, "uploads")     # uploaded product pictures
 ADMIN_FILE = os.path.join(BASE, "admin.html")
 CHECKOUT_BASE = "https://checkout.snugwrld.com/products/"
+
+# ---------------------------------------------------------------------------
+# Writable data (products.json + uploaded pictures)
+# ---------------------------------------------------------------------------
+# Locally these live inside the repo (products.json at the root, pictures
+# under site/uploads/). On Deplexo the container filesystem is read-only
+# and only the /data volume is writable, so when a writable data directory
+# is available the files move there instead. The server must never crash
+# at startup just because it cannot write: if no writable directory
+# exists it serves the shop read-only and the admin API answers with a
+# clear error instead of saving.
+REPO_PRODUCTS_FILE = os.path.join(BASE, "products.json")
+REPO_UPLOADS_DIR = os.path.join(ROOT, "uploads")  # uploaded product pictures
+
+
+def _writable_dir(path):
+    """True if path exists (created if needed) and a file can be written in it."""
+    try:
+        os.makedirs(path, exist_ok=True)
+        probe = os.path.join(path, ".write-test")
+        with open(probe, "w", encoding="utf-8") as f:
+            f.write("ok")
+        os.remove(probe)
+        return True
+    except OSError:
+        return False
+
+
+def _resolve_data_dir():
+    """Pick the writable data directory, or None (read-only mode).
+
+    Priority: the DATA_DIR environment variable (set to /data in the
+    Dockerfile for Deplexo), then /data if it exists and is writable.
+    Otherwise None, which keeps the old behaviour (files inside the repo).
+    """
+    candidate = os.environ.get("DATA_DIR") or None
+    if not candidate and os.path.isdir("/data"):
+        candidate = "/data"
+    if candidate and _writable_dir(candidate):
+        return candidate
+    return None
+
+
+DATA_DIR = _resolve_data_dir()
+PRODUCTS_FILE = (os.path.join(DATA_DIR, "products.json")
+                 if DATA_DIR else REPO_PRODUCTS_FILE)
+UPLOADS_DIR = (os.path.join(DATA_DIR, "uploads")
+               if DATA_DIR else REPO_UPLOADS_DIR)
+
+
+def _seed_products():
+    """Copy the repo's products.json into the data dir on first start.
+
+    Keeps the original 11 products when the volume is still empty. If the
+    copy fails, the shop falls back to reading the repo copy / the built-in
+    list -- startup never crashes.
+    """
+    if not DATA_DIR or os.path.exists(PRODUCTS_FILE):
+        return
+    try:
+        shutil.copyfile(REPO_PRODUCTS_FILE, PRODUCTS_FILE)
+    except OSError:
+        pass
+
+
+_seed_products()
+
+
+def _upload_path(upload):
+    """Filesystem path for a stored upload value like 'uploads/up-....png'."""
+    name = os.path.basename((upload or "").replace("/", os.sep))
+    return os.path.join(UPLOADS_DIR, name)
 
 # ---------------------------------------------------------------------------
 # Persian storefront: colours + UI strings are translated when the shop page
@@ -212,7 +285,7 @@ def resolve_image(url, width):
         if name.startswith(p["id"] + "-"):
             view = name[len(p["id"]) + 1:]
             if p.get("upload"):  # uploaded picture: same image for every view
-                path = os.path.join(ROOT, p["upload"].replace("/", os.sep))
+                path = _upload_path(p["upload"])
                 ctype = mimetypes.guess_type(path)[0] or "image/jpeg"
                 return (path, ctype) if os.path.exists(path) else (None, None)
             # original saved images: pick large/small/side like before
@@ -388,7 +461,7 @@ def patch_shop_js(data):
     for p in products:
         if not p.get("upload"):
             continue
-        path = os.path.join(ROOT, p["upload"].replace("/", os.sep))
+        path = _upload_path(p["upload"])
         if not os.path.exists(path):
             continue
         w, h = image_size(path)
@@ -466,7 +539,11 @@ class Handler(SimpleHTTPRequestHandler):
             if not product["upload"]:
                 return self._send_json({"error": "an image is required for a new product"}, 400)
             products.append(product)
-            save_products(products)
+            try:
+                save_products(products)
+            except OSError:
+                return self._send_json(
+                    {"error": "could not save products: storage is read-only"}, 503)
             return self._send_json(product, 201)
         if self.command in ("PUT", "DELETE") and product_id:
             products = load_products()
@@ -475,7 +552,11 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._send_json({"error": "product not found"}, 404)
             if self.command == "DELETE":
                 products = [p for p in products if p["id"] != product_id]
-                save_products(products)
+                try:
+                    save_products(products)
+                except OSError:
+                    return self._send_json(
+                        {"error": "could not save products: storage is read-only"}, 503)
                 _delete_upload(target)
                 return self._send_json({"ok": True})
             body = self._read_json_body()
@@ -491,7 +572,11 @@ class Handler(SimpleHTTPRequestHandler):
                 target["upload"] = body["upload"]
                 if old_upload and old_upload != target["upload"]:
                     _delete_upload({"upload": old_upload})
-            save_products(products)
+            try:
+                save_products(products)
+            except OSError:
+                return self._send_json(
+                    {"error": "could not save products: storage is read-only"}, 503)
             return self._send_json(target)
         return self._send_json({"error": "method not allowed"}, 405)
 
@@ -516,11 +601,19 @@ class Handler(SimpleHTTPRequestHandler):
             return self._send_json({"error": "only PNG, JPG, WEBP or GIF pictures"}, 400)
         if ext == ".jpeg":
             ext = ".jpg"
-        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        try:
+            os.makedirs(UPLOADS_DIR, exist_ok=True)
+        except OSError:
+            return self._send_json(
+                {"error": "uploads storage is not writable"}, 503)
         save_name = "up-%s%s" % (os.urandom(8).hex(), ext)
         path = os.path.join(UPLOADS_DIR, save_name)
-        with open(path, "wb") as f:
-            f.write(file_bytes)
+        try:
+            with open(path, "wb") as f:
+                f.write(file_bytes)
+        except OSError:
+            return self._send_json(
+                {"error": "could not save the uploaded picture"}, 503)
         w, h = image_size(path)
         return self._send_json({"upload": "uploads/" + save_name,
                                 "width": w, "height": h}, 201)
@@ -600,7 +693,7 @@ def _delete_upload(product):
     upload = (product or {}).get("upload")
     if not upload:
         return
-    path = os.path.join(ROOT, upload.replace("/", os.sep))
+    path = _upload_path(upload)
     if os.path.abspath(path).startswith(os.path.abspath(UPLOADS_DIR)):
         try:
             os.remove(path)
@@ -632,7 +725,11 @@ if __name__ == "__main__":
         port = int(sys.argv[1])
     else:
         port = int(os.environ.get("PORT", "8080"))
-    os.makedirs(UPLOADS_DIR, exist_ok=True)
+    try:
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+    except OSError:
+        pass  # read-only filesystem (e.g. Deplexo without a volume):
+              # the shop still serves; admin saves report an error instead.
     # Listen on all interfaces so the container is reachable from outside
     # (locally this still works the same: http://localhost:PORT).
     server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
