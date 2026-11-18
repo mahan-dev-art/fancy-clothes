@@ -1,0 +1,10 @@
+.git
+__pycache__/
+*.pyc
+.DS_Store
+# Leftovers from the page saver, not part of the site
+_DataURI/
+*.amazonaws.com/
+*.cloudfront.net/
+site/_next/static/chunks-original/
+.claude/
