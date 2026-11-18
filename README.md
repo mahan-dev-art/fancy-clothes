@@ -31,6 +31,25 @@
 
 برای بستن سایت، پنجرهٔ سیاه (ترمینال) رو ببند.
 
+## پنل مدیریت (اضافه / عوض کردن لباس)
+
+برای اضافه کردن یه لباس جدید یا عوض کردن لباس‌ها، لازم نیست کد رو دست بزنی:
+
+1. سایت رو مثل همیشه اجرا کن (دوبار کلیک روی `start-windows.bat`).
+2. توی مرورگر برو به: **http://localhost:8080/admin**
+3. از اونجا می‌تونی:
+   - **لباس جدید اضافه کنی:** نام، رنگ، قیمت و عکس رو بده و «اضافه کن» رو بزن.
+   - **ویرایش کنی:** روی «ویرایش» بزن، چیزی که می‌خوای رو عوض کن و «ذخیره تغییرات» رو بزن. اگه عکس جدید انتخاب نکنی، عکس قبلی می‌مونه.
+   - **حذف کنی:** روی «حذف» بزن.
+
+همه لباس‌ها توی فایل **`products.json`** ذخیره می‌شن و تغییرات بلافاصله توی فروشگاه دیده می‌شه (صفحه فروشگاه رو رفرش کن). عکس‌هایی که آپلود می‌کنی توی پوشه `site/uploads/` ذخیره می‌شن.
+
+| نکته | توضیح |
+|---|---|
+| قیمت | قیمت‌ها فعلاً فقط توی پنل مدیریت نگه داشته می‌شن و روی صفحه فروشگاه نمایش داده نمی‌شن. |
+| گروه | اگه چند رنگ از یه مدل لباس داری، برای همه‌شون یه «گروه» یکسان بنویس تا توی فروشگاه با هم نمایش داده بشن و مشتری رنگ رو انتخاب کنه. |
+| عکس | عکس بهتره روی پس‌زمینه ساده و به صورت عمودی باشه (PNG یا JPG). |
+
 ## مشکل داری؟
 
 | مشکل | راه‌حل |
@@ -88,6 +107,18 @@ python3 serve.py
 | File / folder | What it is |
 |---|---|
 | `site/` | The website itself |
-| `serve.py` | A tiny local server that runs the site. Nothing to install: it only needs Python. |
+| `products.json` | The list of products (name, colour, price, pictures). Edit it from the admin panel — no code changes needed. |
+| `admin.html` | The admin panel page, served at `/admin` |
+| `serve.py` | A tiny local server that runs the site. Nothing to install: it only needs Python. It also serves the admin panel and its API. |
 | `start-mac.command` | Double-click to run on Mac |
 | `start-windows.bat` | Double-click to run on Windows |
+
+### Admin panel
+
+To add a product or change one, no code needed:
+
+1. Run the site as usual (double-click `start-windows.bat`).
+2. Open **http://localhost:8080/admin** in the browser.
+3. Add a product (name, colour, price, picture), edit one, or delete one.
+
+Products are stored in `products.json` and changes show up on the shop page immediately (refresh it). Uploaded pictures are saved under `site/uploads/` (local only, not committed to git).
