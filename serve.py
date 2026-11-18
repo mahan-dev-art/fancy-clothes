@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Serve the saved snugwrld.netlify.app copy locally + admin panel.
+"""Serve the Delta Shop store locally + admin panel.
 
 The storefront is Persian (site/fa.html, RTL, Vazirmatn) and is served at
 "/" -- it shows each product's price from products.json (in تومان) when one
@@ -10,6 +10,8 @@ The saved copy stores Next.js optimized images under hashed filenames, so
 
 Products live in products.json (NOT hard-coded any more). Edit them from the
 admin panel at http://localhost:8080/admin -- no code changes needed.
+Orders placed from the shop are stored in orders.json and managed from
+the admin panel too.
 
 How it works (short version):
   * products.json is the list of clothes. serve.py reads it on every request,
@@ -45,7 +47,6 @@ from urllib.parse import urlparse, parse_qs
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(BASE, "site")               # the shop files
 ADMIN_FILE = os.path.join(BASE, "admin.html")
-CHECKOUT_BASE = "https://checkout.snugwrld.com/products/"
 
 # ---------------------------------------------------------------------------
 # Writable data (products.json + uploaded pictures)
@@ -139,13 +140,16 @@ def fa_color(color):
 
 # User-visible English strings inside the shop's JavaScript file, translated
 # to Persian. Each pair is (English, Persian) as plain text.
-# Brand names ("Snug Wrld", product names) are deliberately NOT in this list.
+# Product names are deliberately NOT in this list (they come from
+# products.json). The old brand name is replaced with Delta Shop, and the
+# old external checkout links are replaced with "#" -- ordering now happens
+# inside the shop (cart.js intercepts those links and adds to the cart).
 # Most appear as double-quoted literals; two are `backtick` template literals
 # (listed separately) -- note the file uses plain apostrophes inside its
 # double-quoted strings (e.g. "IT'S US..."), so do NOT escape them.
 UI_STRINGS_FA = [
-    ("See Availability", "مشاهده موجودی"),
-    ("SEE AVAILABILITY ↗", "مشاهده موجودی ↗"),
+    ("See Availability", "افزودن به سبد"),
+    ("SEE AVAILABILITY ↗", "افزودن به سبد"),
     ("Close detail view", "بستن نمای جزئیات"),
     ("Close ", "بستن "),
     ("About", "درباره ما"),
@@ -154,13 +158,17 @@ UI_STRINGS_FA = [
     ("Previous piece", "آیتم قبلی"),
     ("Show front or back", "نمایش جلو یا پشت"),
     ("IT'S US, NEVER THEM  •  NEW DROPS  •  LAGOS  •  ",
-     "ما هستیم، نه اونا  •  کالکشن جدید  •  لاگوس  •  "),
+     "دلتا شاپ  •  کالکشن جدید  •  لباس‌های تازه  •  "),
     ("It's us, never them. New drops. Lagos.",
-     "ما هستیم، نه اونا. کالکشن‌های جدید. لاگوس."),
+     "دلتا شاپ — کالکشن تازه لباس."),
+    ("Snug Wrld", "Delta Shop"),
+    ("/snug-wrld-logo.png", "/delta-logo.svg"),
+    ("https://aradazr.site/", "#"),
+    ("https://checkout.snugwrld.com/products/", ""),
 ]
 UI_TEMPLATE_STRINGS_FA = [
     ("See availability of ${t} (opens in a new tab)",
-     "مشاهده موجودی ${t} (در تب جدید باز می‌شود)"),
+     "افزودن ${t} به سبد خرید"),
     ("Colour: ${t.label}", "رنگ: ${t.label}"),
 ]
 
@@ -216,11 +224,11 @@ def _legacy_as_list():
         "crimson-memory": ("Crimson Memory LS Shirt", "White", "#ffffff", None, "crimson-memory-shirt"),
         "distressed-logo-t": ("Distressed Logo Print T-Shirt", "Blue", "#2f5fb3", None, "distressed-logo-print-t-shirt"),
         "its-us-tee-black": ("It's Us Never Them Tee", "Black", "#1e1e1e", "its-us-tee", "its-us-never-them-tee-pink"),
-        "jersey-yellow": ("Snug Football Jersey", "Yellow", "#e3ca1e", "jersey", "snug-jersey-blue"),
+        "jersey-yellow": ("Delta Shop Football Jersey", "Yellow", "#e3ca1e", "jersey", "snug-jersey-blue"),
         "silicone-tee": ("Silicone Logo Print T-Shirt", "White", "#ffffff", None, "silicone-logo-tee"),
         "tank-black": ("Distressed Painted Logo Tank Top", "Black", "#2d2d2c", "tank", "distressed-sleeveless-vintage-light-beige"),
-        "varsity": ("Snug Wrld Logo Varsity Jacket", "Black", "#1e1e1e", None, "snug-wrld-varsity-jackets"),
-        "jersey-blue": ("Snug Football Jersey", "Blue", "#0842a9", "jersey", "snug-jersey-blue"),
+        "varsity": ("Delta Shop Logo Varsity Jacket", "Black", "#1e1e1e", None, "snug-wrld-varsity-jackets"),
+        "jersey-blue": ("Delta Shop Football Jersey", "Blue", "#0842a9", "jersey", "snug-jersey-blue"),
         "tank-sand": ("Distressed Painted Logo Tank Top", "Sand", "#b29e8b", "tank", "distressed-sleeveless-vintage-light-beige"),
         "its-us-tee-yellow": ("It's Us Never Them Tee", "Yellow", "#f8dd2f", "its-us-tee", "its-us-never-them-tee-pink"),
         "its-us-tee-bubblegum": ("It's Us Never Them Tee", "Pink", "#f6b1b4", "its-us-tee", "its-us-never-them-tee-pink"),
@@ -268,6 +276,65 @@ def slugify(text):
 
 
 # ---------------------------------------------------------------------------
+# Orders: stored in orders.json next to products.json (under DATA_DIR when
+# one is available, so they survive redeploys on Deplexo). Prices are
+# always taken from products.json on the server -- never trust the total
+# the browser sends.
+# ---------------------------------------------------------------------------
+ORDERS_FILE = (os.path.join(DATA_DIR, "orders.json")
+               if DATA_DIR else os.path.join(BASE, "orders.json"))
+_orders_lock = threading.Lock()
+ORDER_STATUSES = ("new", "confirmed", "shipped")
+
+
+def load_orders():
+    """Read orders.json (newest last in the file); [] when missing/corrupt."""
+    with _orders_lock:
+        try:
+            with open(ORDERS_FILE, "r", encoding="utf-8") as f:
+                orders = json.load(f)
+            if isinstance(orders, list):
+                return orders
+        except (OSError, ValueError):
+            pass
+        return []
+
+
+def save_orders(orders):
+    """Write the order list back to orders.json."""
+    with _orders_lock:
+        tmp = ORDERS_FILE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(orders, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+        os.replace(tmp, ORDERS_FILE)
+
+
+def _parse_price_digits(price):
+    """'850000' / '' -> int toman, or None when no price is set."""
+    digits = re.sub(r"[^\d]", "", str(price or ""))
+    if not digits:
+        return None
+    try:
+        return int(digits)
+    except ValueError:
+        return None
+
+
+def _next_order_number(orders):
+    """Next order number: DS-1001, DS-1002, ... (max existing + 1)."""
+    highest = 1000
+    for o in orders:
+        num = str(o.get("number") or "")
+        if num.startswith("DS-"):
+            try:
+                highest = max(highest, int(num[3:]))
+            except ValueError:
+                pass
+    return "DS-%d" % (highest + 1)
+
+
+# ---------------------------------------------------------------------------
 # Images: find the file for a /products/<slug>-<view>.webp request
 # ---------------------------------------------------------------------------
 def resolve_image(url, width):
@@ -277,8 +344,8 @@ def resolve_image(url, width):
       * original products: image files saved as site/_next/image-*.html
       * products with an uploaded picture: the file under site/uploads/
     """
-    if url == "/snug-wrld-logo.png":
-        return os.path.join(ROOT, "_next", "image.html"), "image/webp"
+    if url == "/delta-logo.svg":
+        return os.path.join(ROOT, "delta-logo.svg"), "image/svg+xml"
     name = os.path.basename(url).rsplit(".", 1)[0]
     products = load_products()
     for p in products:
@@ -403,7 +470,9 @@ def build_product_list_js(products):
     for key, items in groups:
         first = items[0]
         name = json.dumps(first["name"], ensure_ascii=False)
-        url = json.dumps(CHECKOUT_BASE + (first.get("url") or first["id"]), ensure_ascii=False)
+        # The 4th field is the product URL; the shop UI does not link out
+        # any more (orders happen inside the shop), so just pass the id.
+        url = json.dumps(first.get("url") or first["id"], ensure_ascii=False)
         if len(items) == 1:
             colour = json.dumps(fa_color(first.get("color")), ensure_ascii=False)
             parts.append('ou(%s, %s, %s, %s)' % (
@@ -618,6 +687,112 @@ class Handler(SimpleHTTPRequestHandler):
         return self._send_json({"upload": "uploads/" + save_name,
                                 "width": w, "height": h}, 201)
 
+    # -- orders API ---------------------------------------------------------
+    def _api_orders(self, order_number):
+        """GET list / POST create / PUT status / DELETE one order."""
+        if self.command == "GET" and order_number is None:
+            return self._send_json(load_orders())
+        if self.command == "GET" and order_number:
+            order = next((o for o in load_orders()
+                          if o.get("number") == order_number), None)
+            if order is None:
+                return self._send_json({"error": "order not found"}, 404)
+            return self._send_json(order)
+        if self.command == "POST" and order_number is None:
+            body = self._read_json_body()
+            if body is None:
+                return self._send_json({"error": "invalid JSON"}, 400)
+            customer = body.get("customer") or {}
+            name = str(customer.get("name") or "").strip()
+            phone = str(customer.get("phone") or "").strip()
+            address = str(customer.get("address") or "").strip()
+            if not name or not phone or not address:
+                return self._send_json(
+                    {"error": "name, phone and address are required"}, 400)
+            raw_items = body.get("items") or []
+            if not isinstance(raw_items, list) or not raw_items:
+                return self._send_json({"error": "cart is empty"}, 400)
+            products = {p["id"]: p for p in load_products()}
+            items = []
+            total = 0
+            has_unpriced = False
+            for raw in raw_items:
+                if not isinstance(raw, dict):
+                    return self._send_json({"error": "invalid item"}, 400)
+                product = products.get(str(raw.get("id") or ""))
+                if product is None:
+                    return self._send_json(
+                        {"error": "unknown product: %s" % raw.get("id")}, 400)
+                try:
+                    qty = int(raw.get("qty"))
+                except (TypeError, ValueError):
+                    qty = 0
+                if qty < 1:
+                    return self._send_json({"error": "invalid quantity"}, 400)
+                price = _parse_price_digits(product.get("price"))
+                if price is None:
+                    has_unpriced = True
+                else:
+                    total += price * qty
+                items.append({
+                    "id": product["id"],
+                    "name": product["name"],
+                    "color": str(raw.get("color") or product.get("color") or ""),
+                    "size": str(raw.get("size") or ""),
+                    "qty": qty,
+                    "price": price,
+                })
+            orders = load_orders()
+            order = {
+                "number": _next_order_number(orders),
+                "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                "customer": {
+                    "name": name,
+                    "phone": phone,
+                    "address": address,
+                    "notes": str(customer.get("notes") or "").strip(),
+                },
+                "items": items,
+                "total": total,
+                "has_unpriced": has_unpriced,
+                "status": "new",
+            }
+            orders.append(order)
+            try:
+                save_orders(orders)
+            except OSError:
+                return self._send_json(
+                    {"error": "could not save order: storage is read-only"}, 503)
+            return self._send_json(order, 201)
+        if self.command == "PUT" and order_number:
+            body = self._read_json_body()
+            if body is None or body.get("status") not in ORDER_STATUSES:
+                return self._send_json({"error": "invalid status"}, 400)
+            orders = load_orders()
+            target = next((o for o in orders
+                           if o.get("number") == order_number), None)
+            if target is None:
+                return self._send_json({"error": "order not found"}, 404)
+            target["status"] = body["status"]
+            try:
+                save_orders(orders)
+            except OSError:
+                return self._send_json(
+                    {"error": "could not save order: storage is read-only"}, 503)
+            return self._send_json(target)
+        if self.command == "DELETE" and order_number:
+            orders = load_orders()
+            if not any(o.get("number") == order_number for o in orders):
+                return self._send_json({"error": "order not found"}, 404)
+            orders = [o for o in orders if o.get("number") != order_number]
+            try:
+                save_orders(orders)
+            except OSError:
+                return self._send_json(
+                    {"error": "could not save order: storage is read-only"}, 503)
+            return self._send_json({"ok": True})
+        return self._send_json({"error": "method not allowed"}, 405)
+
     # -- routing ------------------------------------------------------------
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -640,6 +815,10 @@ class Handler(SimpleHTTPRequestHandler):
             return self._api_products(None)
         if path.startswith("/api/products/"):
             return self._api_products(path.rsplit("/", 1)[-1])
+        if path == "/api/orders":
+            return self._api_orders(None)
+        if path.startswith("/api/orders/"):
+            return self._api_orders(path.rsplit("/", 1)[-1])
         if path in ("/admin", "/admin.html"):
             try:
                 with open(ADMIN_FILE, "rb") as f:
@@ -668,6 +847,8 @@ class Handler(SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/api/products":
             return self._api_products(None)
+        if parsed.path == "/api/orders":
+            return self._api_orders(None)
         if parsed.path == "/api/upload":
             return self._api_upload()
         return self._send_json({"error": "not found"}, 404)
@@ -676,12 +857,16 @@ class Handler(SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path.startswith("/api/products/"):
             return self._api_products(parsed.path.rsplit("/", 1)[-1])
+        if parsed.path.startswith("/api/orders/"):
+            return self._api_orders(parsed.path.rsplit("/", 1)[-1])
         return self._send_json({"error": "not found"}, 404)
 
     def do_DELETE(self):
         parsed = urlparse(self.path)
         if parsed.path.startswith("/api/products/"):
             return self._api_products(parsed.path.rsplit("/", 1)[-1])
+        if parsed.path.startswith("/api/orders/"):
+            return self._api_orders(parsed.path.rsplit("/", 1)[-1])
         return self._send_json({"error": "not found"}, 404)
 
     def log_message(self, *args):
