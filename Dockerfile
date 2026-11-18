@@ -12,6 +12,11 @@ COPY site/ ./site/
 
 ENV PYTHONUNBUFFERED=1
 
+# Deplexo runs the container read-only except for the /data volume:
+# serve.py keeps products.json and uploaded pictures there so admin
+# changes survive redeploys.
+ENV DATA_DIR=/data
+
 # Hint only: the real port comes from the PORT environment variable
 # that Deplexo sets at runtime (serve.py reads it, default 8080).
 EXPOSE 8080
