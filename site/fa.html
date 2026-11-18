@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>اسناگ ورلد | فروشگاه لباس</title>
-<meta name="description" content="فروشگاه رسمی اسناگ ورلد — کالکشن تازه لباس، رنگ‌ها و قیمت‌ها">
+<title>دلتا شاپ | فروشگاه لباس</title>
+<meta name="description" content="فروشگاه دلتا شاپ — کالکشن تازه لباس، رنگ‌ها و قیمت‌ها">
 <style>
   @font-face {
     font-family: "Vazirmatn";
@@ -18,8 +18,8 @@
   body {
     margin: 0;
     font-family: "Vazirmatn", Tahoma, sans-serif;
-    background: #f7f2ea;
-    color: #241a12;
+    background: #16130f;
+    color: #f2ead9;
     line-height: 1.8;
   }
   a { color: inherit; }
@@ -28,9 +28,9 @@
   /* -- header -- */
   header {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(247, 242, 234, 0.94);
+    background: rgba(22, 19, 15, 0.94);
     backdrop-filter: blur(6px);
-    border-bottom: 1px solid #e3d8cb;
+    border-bottom: 1px solid #3a322a;
   }
   .header-inner {
     max-width: 1100px; margin: 0 auto; padding: 12px 20px;
@@ -38,20 +38,20 @@
   }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .brand img { height: 36px; width: auto; display: block; }
-  .brand span { font-weight: 700; font-size: 20px; letter-spacing: 0.01em; }
+  .brand span { font-weight: 700; font-size: 20px; letter-spacing: 0.01em; color: #e8c97a; }
   nav { margin-inline-start: auto; display: flex; gap: 22px; }
-  nav a { text-decoration: none; font-size: 15px; color: #5a4636; }
-  nav a:hover { color: #241a12; }
+  nav a { text-decoration: none; font-size: 15px; color: #b8a894; }
+  nav a:hover { color: #f2ead9; }
 
   /* -- hero -- */
   .hero { text-align: center; padding: 56px 20px 40px; }
-  .hero h1 { margin: 0; font-size: clamp(34px, 6vw, 56px); line-height: 1.3; }
-  .hero p { margin: 10px auto 0; max-width: 560px; color: #6b5847; font-size: 17px; }
+  .hero h1 { margin: 0; font-size: clamp(34px, 6vw, 56px); line-height: 1.3; color: #e8c97a; }
+  .hero p { margin: 10px auto 0; max-width: 560px; color: #b8a894; font-size: 17px; }
 
   /* -- marquee -- */
   .marquee {
     overflow: hidden; white-space: nowrap;
-    background: #241a12; color: #f7f2ea;
+    background: #c9a24b; color: #1a1408;
     padding: 10px 0; font-size: 15px; font-weight: 700; letter-spacing: 0.02em;
   }
   .marquee span { display: inline-block; padding-inline-start: 0; animation: slide 22s linear infinite; }
@@ -59,7 +59,7 @@
 
   main { max-width: 1100px; margin: 0 auto; padding: 36px 20px 20px; }
   h2 { font-size: 24px; margin: 0 0 6px; }
-  .section-sub { color: #6b5847; margin: 0 0 24px; font-size: 15px; }
+  .section-sub { color: #b8a894; margin: 0 0 24px; font-size: 15px; }
 
   /* -- product grid -- */
   .grid {
@@ -67,44 +67,75 @@
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   }
   .card {
-    background: #fffdf9; border: 1px solid #e3d8cb; border-radius: 16px;
+    background: #211d18; border: 1px solid #3a322a; border-radius: 16px;
     overflow: hidden; display: flex; flex-direction: column;
   }
-  .card .pic { background: #efe6da; aspect-ratio: 4 / 5; overflow: hidden; }
+  .card .pic { background: #2c261f; aspect-ratio: 4 / 5; overflow: hidden; }
   .card .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card .body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
   .card h3 { margin: 0; font-size: 17px; line-height: 1.5; }
-  .card .color-line { font-size: 14px; color: #6b5847; margin: 0; }
+  .card .color-line { font-size: 14px; color: #b8a894; margin: 0; }
   .swatches { display: flex; gap: 8px; align-items: center; min-height: 24px; }
   .swatch {
     width: 24px; height: 24px; border-radius: 50%;
-    border: 2px solid #fff; outline: 1px solid #cbbfae;
+    border: 2px solid #211d18; outline: 1px solid #6b5a44;
     cursor: pointer; padding: 0;
   }
-  .swatch[aria-pressed="true"] { outline: 2px solid #241a12; }
-  .price { font-size: 18px; font-weight: 700; color: #241a12; margin: 0; }
-  .price small { font-size: 13px; font-weight: 400; color: #6b5847; }
+  .swatch[aria-pressed="true"] { outline: 2px solid #e8c97a; }
+  .sizes { display: flex; gap: 8px; align-items: center; }
+  .sizes span { font-size: 13px; color: #b8a894; }
+  .size-btn {
+    min-width: 42px; height: 34px; border-radius: 8px;
+    border: 1px solid #6b5a44; background: none; color: #f2ead9;
+    font-family: inherit; font-size: 14px; cursor: pointer;
+  }
+  .size-btn[aria-pressed="true"] { background: #c9a24b; color: #1a1408; border-color: #c9a24b; font-weight: 700; }
+  .price { font-size: 18px; font-weight: 700; color: #e8c97a; margin: 0; }
+  .price small { font-size: 13px; font-weight: 400; color: #b8a894; }
   .btn {
     display: block; text-align: center; text-decoration: none;
-    background: #3b2a1e; color: #fff; border-radius: 999px;
-    padding: 10px 18px; font-size: 15px; margin-top: auto;
+    background: #c9a24b; color: #1a1408; border: none; border-radius: 999px;
+    padding: 10px 18px; font-size: 15px; font-weight: 700; margin-top: auto;
+    cursor: pointer; font-family: inherit;
   }
-  .btn:hover { background: #5a4230; }
-  .empty, .error { text-align: center; color: #6b5847; padding: 40px 0; }
+  .btn:hover { background: #d9b45e; }
+  .empty, .error { text-align: center; color: #b8a894; padding: 40px 0; }
+
+  /* -- how to order -- */
+  .steps {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-top: 8px;
+  }
+  .step {
+    background: #211d18; border: 1px solid #3a322a; border-radius: 16px;
+    padding: 18px;
+  }
+  .step .num {
+    display: inline-block; width: 34px; height: 34px; line-height: 34px;
+    text-align: center; border-radius: 50%;
+    background: #c9a24b; color: #1a1408; font-weight: 700; font-size: 16px;
+  }
+  .step h3 { margin: 10px 0 4px; font-size: 16px; }
+  .step p { margin: 0; color: #b8a894; font-size: 14px; }
+  .ship-note {
+    margin-top: 18px; padding: 14px 18px; border: 1px dashed #6b5a44;
+    border-radius: 12px; color: #b8a894; font-size: 14px;
+  }
 
   /* -- about / contact -- */
   .info { display: grid; gap: 22px; grid-template-columns: 1fr 1fr; margin-top: 56px; }
   @media (max-width: 640px) { .info { grid-template-columns: 1fr; } }
   .info section {
-    background: #fffdf9; border: 1px solid #e3d8cb; border-radius: 16px; padding: 22px;
+    background: #211d18; border: 1px solid #3a322a; border-radius: 16px; padding: 22px;
   }
-  .info p { margin: 0; color: #4c3d2e; font-size: 15px; }
+  .info p { margin: 0; color: #cfc4b2; font-size: 15px; }
 
   footer {
-    margin-top: 56px; border-top: 1px solid #e3d8cb;
-    padding: 22px 20px 30px; text-align: center; color: #6b5847; font-size: 14px;
+    margin-top: 56px; border-top: 1px solid #3a322a;
+    padding: 22px 20px 30px; text-align: center; color: #b8a894; font-size: 14px;
   }
-  footer a { color: #5a4636; }
+  footer a { color: #e8c97a; }
 </style>
 </head>
 <body>
@@ -112,11 +143,12 @@
 <header>
   <div class="header-inner">
     <a class="brand" href="/">
-      <img src="/_next/image?url=%2Fsnug-wrld-logo.png&amp;w=256&amp;q=75" alt="Snug Wrld">
-      <span>Snug Wrld</span>
+      <img src="/delta-logo.svg" alt="Delta Shop">
+      <span>Delta Shop</span>
     </a>
     <nav>
       <a href="#shop">فروشگاه</a>
+      <a href="#howto">نحوه سفارش</a>
       <a href="#about">درباره ما</a>
       <a href="#contact">تماس</a>
     </nav>
@@ -124,8 +156,8 @@
 </header>
 
 <section class="hero">
-  <h1>اسناگ ورلد</h1>
-  <p>فروشگاه رسمی اسناگ ورلد — کالکشن تازه؛ هر لباس را ببین، رنگش را انتخاب کن و موجودی‌اش را بررسی کن.</p>
+  <h1>دلتا شاپ</h1>
+  <p>فروشگاه لباس دلتا شاپ — کالکشن تازه؛ لباس را انتخاب کن، به سبد اضافه کن و سفارشت را ثبت کن.</p>
 </section>
 
 <div class="marquee" aria-hidden="true"><span id="marquee-text"></span></div>
@@ -138,28 +170,55 @@
     <p id="status" class="empty">در حال بارگذاری محصولات…</p>
   </section>
 
+  <section id="howto" style="margin-top:56px">
+    <h2>نحوه سفارش</h2>
+    <p class="section-sub">سفارش در چهار قدم ساده</p>
+    <div class="steps">
+      <div class="step">
+        <span class="num">۱</span>
+        <h3>انتخاب لباس</h3>
+        <p>لباس، رنگ و سایز دلخواهت را انتخاب کن.</p>
+      </div>
+      <div class="step">
+        <span class="num">۲</span>
+        <h3>سبد خرید</h3>
+        <p>لباس را به سبد اضافه کن؛ می‌توانی چند قلم را با هم سفارش بدهی.</p>
+      </div>
+      <div class="step">
+        <span class="num">۳</span>
+        <h3>ثبت سفارش</h3>
+        <p>در سبد خرید دکمهٔ «ثبت سفارش» را بزن و نام، شماره تماس و آدرست را بنویس.</p>
+      </div>
+      <div class="step">
+        <span class="num">۴</span>
+        <h3>تماس برای تایید</h3>
+        <p>بعد از ثبت، برای تایید سفارش و هماهنگی ارسال با تو تماس می‌گیریم.</p>
+      </div>
+    </div>
+    <p class="ship-note">هزینه ارسال پس از ثبت سفارش اعلام می‌شود. اگر قیمت لباسی مشخص نشده باشد، قیمت آن هم پس از ثبت سفارش اعلام می‌شود.</p>
+  </section>
+
   <div class="info">
     <section id="about">
       <h2>درباره ما</h2>
-      <p>اسناگ ورلد یک برند پوشاک است؛ لباس‌هایی ساده، راحت و با هویت خودمان. هر مدل در چند رنگ عرضه می‌شود و می‌توانی رنگ دلخواهت را انتخاب کنی.</p>
+      <p>دلتا شاپ یک فروشگاه پوشاک است؛ لباس‌هایی ساده، راحت و با هویت خودمان. هر مدل در چند رنگ عرضه می‌شود و می‌توانی رنگ و سایز دلخواهت را انتخاب کنی.</p>
     </section>
     <section id="contact">
       <h2>تماس</h2>
-      <p>برای ثبت سفارش، روی دکمهٔ «مشاهده موجودی» هر محصول بزن؛ سفارش و پرداخت از همان‌جا انجام می‌شود.</p>
+      <p>برای سفارش، لباس را به سبد خرید اضافه کن و فرم سفارش را پر کن؛ برای تایید سفارش با تو تماس می‌گیریم.</p>
     </section>
   </div>
 </main>
 
 <footer>
-  <p>© ۲۰۲۶ اسناگ ورلد — همهٔ حقوق محفوظ است.</p>
+  <p>© ۲۰۲۶ دلتا شاپ — همهٔ حقوق محفوظ است.</p>
   <p><a href="/rack">نمای کلاسیک رگال</a></p>
 </footer>
 
+<script src="/cart.js"></script>
 <script>
 (function () {
   "use strict";
-
-  var CHECKOUT_BASE = "https://checkout.snugwrld.com/products/";
 
   var COLOR_FA = {
     "White": "سفید", "Black": "مشکی", "Pink": "صورتی", "Yellow": "زرد",
@@ -167,9 +226,10 @@
     "Grey": "خاکستری", "Gray": "خاکستری", "Beige": "کرم",
     "Brown": "قهوه‌ای", "Orange": "نارنجی", "Purple": "بنفش"
   };
+  var SIZES = ["S", "M", "L", "XL"];
 
   // نوار متحرک بالای فروشگاه
-  var marqueeUnit = "ما هستیم، نه اونا  •  دراپ‌های جدید  •  لاگوس  •  ";
+  var marqueeUnit = "دلتا شاپ  •  کالکشن جدید  •  لباس‌های تازه  •  ";
   document.getElementById("marquee-text").textContent = marqueeUnit.repeat(6);
 
   function faColor(color) {
@@ -182,7 +242,7 @@
   }
 
   // قیمت را فقط وقتی در products.json وارد شده نشان بده؛
-  // اگر خالی بود هیچ چیزی برای قیمت نمایش نده و قیمتی نساز.
+  // اگر خالی بود «تماس بگیرید» نشان بده و قیمتی نساز.
   function formatPrice(price) {
     var digits = String(price == null ? "" : price).replace(/[^\d]/g, "");
     if (!digits) return "";
@@ -234,18 +294,25 @@
     swatches.className = "swatches";
     body.appendChild(swatches);
 
+    var sizesRow = document.createElement("div");
+    sizesRow.className = "sizes";
+    var sizesLabel = document.createElement("span");
+    sizesLabel.textContent = "سایز:";
+    sizesRow.appendChild(sizesLabel);
+    body.appendChild(sizesRow);
+
     var priceEl = document.createElement("p");
     priceEl.className = "price";
     body.appendChild(priceEl);
 
-    var btn = document.createElement("a");
+    var btn = document.createElement("button");
+    btn.type = "button";
     btn.className = "btn";
-    btn.target = "_blank";
-    btn.rel = "noopener";
-    btn.textContent = "مشاهده موجودی";
+    btn.textContent = "🛒 افزودن به سبد";
     body.appendChild(btn);
 
     var selected = first;
+    var selectedSize = "M";
 
     function select(item) {
       selected = item;
@@ -253,14 +320,7 @@
       img.alt = item.name;
       colorLine.textContent = "رنگ: " + faColor(item.color);
       var price = formatPrice(item.price);
-      if (price) {
-        priceEl.textContent = price;
-        priceEl.style.display = "";
-      } else {
-        priceEl.textContent = "";
-        priceEl.style.display = "none";
-      }
-      btn.href = CHECKOUT_BASE + (item.url || item.id);
+      priceEl.textContent = price || "تماس بگیرید";
       Array.prototype.forEach.call(swatches.children, function (sw) {
         sw.setAttribute("aria-pressed", sw.dataset.pid === item.id ? "true" : "false");
       });
@@ -276,6 +336,34 @@
       sw.style.background = item.hex || "#888888";
       sw.addEventListener("click", function () { select(item); });
       swatches.appendChild(sw);
+    });
+
+    SIZES.forEach(function (s) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "size-btn";
+      b.textContent = s;
+      b.setAttribute("aria-pressed", s === selectedSize ? "true" : "false");
+      b.addEventListener("click", function () {
+        selectedSize = s;
+        Array.prototype.forEach.call(sizesRow.querySelectorAll(".size-btn"), function (x) {
+          x.setAttribute("aria-pressed", x.textContent === selectedSize ? "true" : "false");
+        });
+      });
+      sizesRow.appendChild(b);
+    });
+
+    btn.addEventListener("click", function () {
+      if (window.DeltaCart) {
+        window.DeltaCart.add({
+          id: selected.id,
+          name: selected.name,
+          color: faColor(selected.color),
+          size: selectedSize,
+          price: selected.price,
+          image: imageUrl(selected, 256)
+        });
+      }
     });
 
     // هاور روی عکس: اگر نمای کناری دارد، آن را نشان بده
