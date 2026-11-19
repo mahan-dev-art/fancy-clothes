@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>پرو روی مانکن | دلتا شاپ</title>
+<meta name="description" content="لباس دلتا شاپ را روی مانکن پرو کن — رنگ و سایز را انتخاب کن و ببین تن مانکن چه شکلی می‌شود">
+<style>
+  @font-face {
+    font-family: "Vazirmatn";
+    src: url("/fonts/Vazirmatn.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, sans-serif;
+    background: #16130f;
+    color: #f2ead9;
+    line-height: 1.8;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; }
+
+  /* -- header (same as the shop home) -- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(22, 19, 15, 0.94);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid #3a322a;
+  }
+  .header-inner {
+    max-width: 1100px; margin: 0 auto; padding: 12px 20px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand img { height: 36px; width: auto; display: block; }
+  .brand span { font-weight: 700; font-size: 20px; letter-spacing: 0.01em; color: #e8c97a; }
+  nav { margin-inline-start: auto; display: flex; gap: 22px; }
+  nav a { text-decoration: none; font-size: 15px; color: #b8a894; }
+  nav a:hover, nav a.active { color: #e8c97a; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 36px 20px 20px; }
+  h1 { font-size: clamp(28px, 5vw, 40px); margin: 0; color: #e8c97a; line-height: 1.4; }
+  .page-sub { color: #b8a894; margin: 6px 0 28px; font-size: 16px; }
+
+  /* -- try-on layout -- */
+  .tryon {
+    display: grid; gap: 22px;
+    grid-template-columns: 1fr 380px;
+    align-items: start;
+  }
+  @media (max-width: 860px) { .tryon { grid-template-columns: 1fr; } }
+
+  .stage {
+    background: radial-gradient(ellipse 90% 70% at 50% 30%, #2b241c 0%, #211d18 55%, #1a1510 100%);
+    border: 1px solid #3a322a; border-radius: 20px;
+    padding: 18px 10px 6px; text-align: center;
+    position: sticky; top: 76px;
+  }
+  @media (max-width: 860px) { .stage { position: static; } }
+  .stage svg { width: min(100%, 420px); height: auto; display: block; margin: 0 auto; }
+  .stage-hint { color: #b8a894; font-size: 13px; margin: 4px 0 14px; }
+
+  .panel {
+    background: #211d18; border: 1px solid #3a322a; border-radius: 20px;
+    padding: 22px;
+  }
+  .panel h2 { font-size: 20px; margin: 0 0 4px; }
+  .panel .color-line { color: #b8a894; font-size: 14px; margin: 0 0 6px; }
+  .price { font-size: 20px; font-weight: 700; color: #e8c97a; margin: 0 0 14px; }
+
+  .swatches { display: flex; gap: 8px; align-items: center; min-height: 24px; margin-bottom: 14px; }
+  .swatch {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid #211d18; outline: 1px solid #6b5a44;
+    cursor: pointer; padding: 0;
+  }
+  .swatch[aria-pressed="true"] { outline: 2px solid #e8c97a; }
+
+  .sizes { display: flex; gap: 8px; align-items: center; margin-bottom: 18px; }
+  .sizes span { font-size: 13px; color: #b8a894; }
+  .size-btn {
+    min-width: 42px; height: 34px; border-radius: 8px;
+    border: 1px solid #6b5a44; background: none; color: #f2ead9;
+    font-family: inherit; font-size: 14px; cursor: pointer;
+  }
+  .size-btn[aria-pressed="true"] { background: #c9a24b; color: #1a1408; border-color: #c9a24b; font-weight: 700; }
+
+  .slider-row { margin-bottom: 14px; }
+  .slider-row label { display: flex; justify-content: space-between; font-size: 14px; color: #cfc4b2; }
+  .slider-row input[type="range"] { width: 100%; accent-color: #c9a24b; }
+
+  .btn {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    background: #c9a24b; color: #1a1408; border: none; border-radius: 999px;
+    padding: 11px 18px; font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: inherit; margin-top: 6px;
+  }
+  .btn:hover { background: #d9b45e; }
+  .btn-ghost {
+    background: none; border: 1px solid #6b5a44; color: #f2ead9;
+  }
+  .btn-ghost:hover { background: #2c261f; }
+
+  /* -- product picker -- */
+  .picker { margin-top: 40px; }
+  .picker h2 { font-size: 22px; margin: 0 0 4px; }
+  .picker .section-sub { color: #b8a894; margin: 0 0 20px; font-size: 15px; }
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  .pick {
+    background: #211d18; border: 1px solid #3a322a; border-radius: 14px;
+    overflow: hidden; cursor: pointer; padding: 0; text-align: start;
+    font-family: inherit; color: inherit;
+  }
+  .pick[aria-pressed="true"] { border-color: #c9a24b; outline: 2px solid #c9a24b; }
+  .pick .pic { background: #2c261f; aspect-ratio: 4 / 5; overflow: hidden; }
+  .pick .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pick .name { padding: 10px 12px 12px; font-size: 14px; line-height: 1.5; margin: 0; }
+
+  .empty, .error { text-align: center; color: #b8a894; padding: 40px 0; }
+
+  footer {
+    margin-top: 56px; border-top: 1px solid #3a322a;
+    padding: 22px 20px 30px; text-align: center; color: #b8a894; font-size: 14px;
+  }
+  footer a { color: #e8c97a; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="brand" href="/">
+      <img src="/delta-logo.svg" alt="Delta Shop">
+      <span>Delta Shop</span>
+    </a>
+    <nav>
+      <a href="/">فروشگاه</a>
+      <a href="/tryon" class="active">پرو روی مانکن</a>
+      <a href="/rack">نمای رگال</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>پرو روی مانکن</h1>
+  <p class="page-sub">لباس را انتخاب کن و ببین تن مانکن چه شکلی می‌شود؛ اندازه و جایش را هم می‌توانی تنظیم کنی.</p>
+
+  <div class="tryon">
+    <div class="stage">
+      <svg viewBox="0 0 400 660" role="img" aria-label="مانکن">
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="38%" r="55%">
+            <stop offset="0%" stop-color="#c9a24b" stop-opacity="0.20"/>
+            <stop offset="100%" stop-color="#c9a24b" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#e9e0d1"/>
+            <stop offset="100%" stop-color="#c9bda6"/>
+          </linearGradient>
+          <clipPath id="torsoClip">
+            <path d="M136,142 C148,130 172,124 200,124 C228,124 252,130 264,142
+                     C270,190 264,250 254,306 C248,344 246,372 248,396
+                     C222,408 178,408 152,396 C154,372 152,344 146,306
+                     C136,250 130,190 136,142 Z"/>
+          </clipPath>
+        </defs>
+
+        <circle cx="200" cy="300" r="185" fill="url(#glow)"/>
+        <ellipse cx="200" cy="646" rx="88" ry="10" fill="#000" opacity="0.35"/>
+
+        <!-- legs -->
+        <g fill="url(#skin)" stroke="#c9a24b" stroke-opacity="0.55" stroke-width="1.5">
+          <path d="M168,400 L196,400 L193,540 C192,580 191,606 190,624 L170,624 C166,580 164,500 166,430 Z"/>
+          <path d="M232,400 L204,400 L207,540 C208,580 209,606 210,624 L230,624 C234,580 236,500 234,430 Z"/>
+          <ellipse cx="180" cy="627" rx="14" ry="7"/>
+          <ellipse cx="220" cy="627" rx="14" ry="7"/>
+        </g>
+
+        <!-- arms (behind the torso) -->
+        <g fill="url(#skin)" stroke="#c9a24b" stroke-opacity="0.55" stroke-width="1.5">
+          <path d="M142,146 C122,152 110,172 106,206 C102,244 100,286 102,322
+                   C103,336 114,338 118,328 C124,292 128,248 134,212
+                   C138,186 144,164 152,152 Z"/>
+          <path d="M258,146 C278,152 290,172 294,206 C298,244 300,286 298,322
+                   C297,336 286,338 282,328 C276,292 272,248 266,212
+                   C262,186 256,164 248,152 Z"/>
+        </g>
+
+        <!-- torso base (visible when no garment is on) -->
+        <path d="M136,142 C148,130 172,124 200,124 C228,124 252,130 264,142
+                 C270,190 264,250 254,306 C248,344 246,372 248,396
+                 C222,408 178,408 152,396 C154,372 152,344 146,306
+                 C136,250 130,190 136,142 Z"
+              fill="url(#skin)" stroke="#c9a24b" stroke-opacity="0.55" stroke-width="1.5"/>
+
+        <!-- the garment, clipped to the torso -->
+        <g clip-path="url(#torsoClip)">
+          <g id="garmentG">
+            <image id="garmentImg" x="130" y="124" width="140" height="284"
+                   preserveAspectRatio="xMidYMid slice" href=""/>
+          </g>
+        </g>
+        <!-- torso outline on top of the garment -->
+        <path d="M136,142 C148,130 172,124 200,124 C228,124 252,130 264,142
+                 C270,190 264,250 254,306 C248,344 246,372 248,396
+                 C222,408 178,408 152,396 C154,372 152,344 146,306
+                 C136,250 130,190 136,142 Z"
+              fill="none" stroke="#c9a24b" stroke-opacity="0.65" stroke-width="1.5"/>
+
+        <!-- neck + head -->
+        <path d="M188,90 L212,90 L208,126 L192,126 Z"
+              fill="url(#skin)" stroke="#c9a24b" stroke-opacity="0.55" stroke-width="1.5"/>
+        <ellipse cx="200" cy="52" rx="31" ry="40"
+                 fill="url(#skin)" stroke="#c9a24b" stroke-opacity="0.65" stroke-width="1.5"/>
+        <path d="M186,96 Q200,104 214,96" fill="none" stroke="#c9a24b" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <p class="stage-hint">لباس را از پایین انتخاب کن؛ با لغزنده‌ها اندازه و جای آن را روی مانکن تنظیم کن.</p>
+    </div>
+
+    <div class="panel">
+      <h2 id="selName">یک لباس انتخاب کن</h2>
+      <p class="color-line" id="selColor"></p>
+      <p class="price" id="selPrice"></p>
+
+      <div class="swatches" id="swatches"></div>
+
+      <div class="sizes" id="sizesRow"><span>سایز:</span></div>
+
+      <div class="slider-row">
+        <label><span>اندازه لباس</span><span id="scaleVal">۱۰۰٪</span></label>
+        <input type="range" id="scaleRange" min="0.8" max="1.6" step="0.01" value="1">
+      </div>
+      <div class="slider-row">
+        <label><span>جای لباس روی مانکن</span><span id="dyVal">۰</span></label>
+        <input type="range" id="dyRange" min="-60" max="60" step="1" value="0">
+      </div>
+
+      <button type="button" class="btn" id="addBtn">🛒 افزودن به سبد</button>
+      <button type="button" class="btn btn-ghost" id="clearBtn">بدون لباس</button>
+    </div>
+  </div>
+
+  <section class="picker">
+    <h2>انتخاب لباس</h2>
+    <p class="section-sub">روی هر لباس بزن تا تن مانکن برود</p>
+    <div id="grid" class="grid"></div>
+    <p id="status" class="empty">در حال بارگذاری محصولات…</p>
+  </section>
+</main>
+
+<footer>
+  <p>© ۲۰۲۶ دلتا شاپ — همهٔ حقوق محفوظ است.</p>
+  <p><a href="/">بازگشت به فروشگاه</a> • <a href="/rack">نمای کلاسیک رگال</a></p>
+</footer>
+
+<script src="/cart.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var COLOR_FA = {
+    "White": "سفید", "Black": "مشکی", "Pink": "صورتی", "Yellow": "زرد",
+    "Blue": "آبی", "Sand": "شنی", "Red": "قرمز", "Green": "سبز",
+    "Grey": "خاکستری", "Gray": "خاکستری", "Beige": "کرم",
+    "Brown": "قهوه‌ای", "Orange": "نارنجی", "Purple": "بنفش"
+  };
+  var SIZES = ["S", "M", "L", "XL"];
+
+  function faColor(color) {
+    return COLOR_FA[color] || color || "";
+  }
+  function imageUrl(product, width) {
+    return "/_next/image?url=" + encodeURIComponent("/products/" + product.id + "-front.webp")
+      + "&w=" + (width || 640) + "&q=75";
+  }
+  function formatPrice(price) {
+    var digits = String(price == null ? "" : price).replace(/[^\d]/g, "");
+    if (!digits) return "";
+    var n = Number(digits);
+    if (!isFinite(n)) return "";
+    return n.toLocaleString("fa-IR") + " تومان";
+  }
+  function groupProducts(products) {
+    var groups = [], seen = {};
+    products.forEach(function (p) {
+      var key = p.group || p.id;
+      if (seen[key] !== undefined) groups[seen[key]].push(p);
+      else { seen[key] = groups.length; groups.push([p]); }
+    });
+    return groups;
+  }
+
+  var garmentImg = document.getElementById("garmentImg");
+  var garmentG = document.getElementById("garmentG");
+  var selName = document.getElementById("selName");
+  var selColor = document.getElementById("selColor");
+  var selPrice = document.getElementById("selPrice");
+  var swatchesBox = document.getElementById("swatches");
+  var sizesRow = document.getElementById("sizesRow");
+  var scaleRange = document.getElementById("scaleRange");
+  var dyRange = document.getElementById("dyRange");
+  var scaleVal = document.getElementById("scaleVal");
+  var dyVal = document.getElementById("dyVal");
+
+  var selected = null;      // the chosen product (one colourway)
+  var selectedGroup = null; // its colourway group
+  var selectedSize = "M";
+
+  function applyFit() {
+    var s = parseFloat(scaleRange.value) || 1;
+    var dy = parseInt(dyRange.value, 10) || 0;
+    // scale around the torso centre (200, 266), then shift vertically
+    garmentG.setAttribute("transform",
+      "translate(200 266) scale(" + s + ") translate(-200 -266) translate(0 " + dy + ")");
+    scaleVal.textContent = Math.round(s * 100).toLocaleString("fa-IR") + "٪";
+    dyVal.textContent = dy.toLocaleString("fa-IR");
+  }
+  scaleRange.addEventListener("input", applyFit);
+  dyRange.addEventListener("input", applyFit);
+
+  function select(item, group) {
+    selected = item;
+    selectedGroup = group;
+    garmentImg.setAttribute("href", imageUrl(item, 640));
+    selName.textContent = item.name;
+    selColor.textContent = "رنگ: " + faColor(item.color);
+    var price = formatPrice(item.price);
+    selPrice.textContent = price || "تماس بگیرید";
+    Array.prototype.forEach.call(swatchesBox.children, function (sw) {
+      sw.setAttribute("aria-pressed", sw.dataset.pid === item.id ? "true" : "false");
+    });
+  }
+
+  function groupKey(group) {
+    return group[0].group || group[0].id;
+  }
+
+  function buildSwatches(group) {
+    swatchesBox.innerHTML = "";
+    group.forEach(function (item) {
+      var sw = document.createElement("button");
+      sw.type = "button";
+      sw.className = "swatch";
+      sw.dataset.pid = item.id;
+      sw.title = faColor(item.color);
+      sw.setAttribute("aria-label", "رنگ " + faColor(item.color));
+      sw.style.background = item.hex || "#888888";
+      sw.addEventListener("click", function () { select(item, group); });
+      swatchesBox.appendChild(sw);
+    });
+  }
+
+  SIZES.forEach(function (s) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "size-btn";
+    b.textContent = s;
+    b.setAttribute("aria-pressed", s === selectedSize ? "true" : "false");
+    b.addEventListener("click", function () {
+      selectedSize = s;
+      Array.prototype.forEach.call(sizesRow.querySelectorAll(".size-btn"), function (x) {
+        x.setAttribute("aria-pressed", x.textContent === selectedSize ? "true" : "false");
+      });
+    });
+    sizesRow.appendChild(b);
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    selected = null;
+    garmentImg.removeAttribute("href");
+    selName.textContent = "یک لباس انتخاب کن";
+    selColor.textContent = "";
+    selPrice.textContent = "";
+    scaleRange.value = "1";
+    dyRange.value = "0";
+    applyFit();
+    Array.prototype.forEach.call(document.querySelectorAll(".pick"), function (card) {
+      card.setAttribute("aria-pressed", "false");
+    });
+  });
+
+  document.getElementById("addBtn").addEventListener("click", function () {
+    if (!selected) { selName.textContent = "اول یک لباس انتخاب کن"; return; }
+    if (window.DeltaCart) {
+      window.DeltaCart.add({
+        id: selected.id,
+        name: selected.name,
+        color: faColor(selected.color),
+        size: selectedSize,
+        price: selected.price,
+        image: imageUrl(selected, 256)
+      });
+    }
+  });
+
+  var grid = document.getElementById("grid");
+  var status = document.getElementById("status");
+
+  fetch("/api/products")
+    .then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    })
+    .then(function (products) {
+      if (!products || !products.length) {
+        status.textContent = "هنوز محصولی در فروشگاه ثبت نشده است.";
+        return;
+      }
+      status.style.display = "none";
+      var groups = groupProducts(products);
+      groups.forEach(function (group) {
+        var first = group[0];
+        var card = document.createElement("button");
+        card.type = "button";
+        card.className = "pick";
+        card.dataset.gid = groupKey(group);
+        card.setAttribute("aria-pressed", "false");
+        var pic = document.createElement("div");
+        pic.className = "pic";
+        var img = document.createElement("img");
+        img.alt = first.name;
+        img.loading = "lazy";
+        img.src = imageUrl(first, 320);
+        pic.appendChild(img);
+        card.appendChild(pic);
+        var name = document.createElement("p");
+        name.className = "name";
+        name.textContent = first.name;
+        card.appendChild(name);
+        card.addEventListener("click", function () {
+          buildSwatches(group);
+          select(group[0], group);
+          Array.prototype.forEach.call(document.querySelectorAll(".pick"), function (c) {
+            c.setAttribute("aria-pressed", c === card ? "true" : "false");
+          });
+        });
+        grid.appendChild(card);
+      });
+      // dress the mannequin with the first product right away
+      buildSwatches(groups[0]);
+      select(groups[0][0], groups[0]);
+      var firstCard = grid.querySelector(".pick");
+      if (firstCard) firstCard.setAttribute("aria-pressed", "true");
+    })
+    .catch(function () {
+      status.textContent = "محصولات بارگذاری نشد؛ لطفاً صفحه را دوباره باز کن.";
+      status.className = "error";
+    });
+
+  applyFit();
+})();
+</script>
+</body>
+</html>
