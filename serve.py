@@ -5,8 +5,6 @@ The storefront is Persian (site/fa.html, RTL, Vazirmatn) and is served at
 "/" -- it shows each product's price from products.json (in تومان) when one
 is set. The original rack page was also translated to Persian in place
 (site/index.html + translated UI strings in the JS) and is served at "/rack".
-The virtual try-on page (site/tryon.html) shows a mannequin and lets the
-visitor pick a product and see it on the mannequin; it is served at "/tryon".
 The saved copy stores Next.js optimized images under hashed filenames, so
 /_next/image?url=... requests are mapped back to those files here.
 
@@ -810,13 +808,6 @@ class Handler(SimpleHTTPRequestHandler):
             # The original rack page, translated to Persian in place.
             try:
                 with open(os.path.join(ROOT, "index.html"), "rb") as f:
-                    return self._send_bytes(f.read(), "text/html; charset=utf-8")
-            except OSError:
-                return self.send_error(404)
-        if path == "/tryon":
-            # Virtual try-on: pick a product and see it on the mannequin.
-            try:
-                with open(os.path.join(ROOT, "tryon.html"), "rb") as f:
                     return self._send_bytes(f.read(), "text/html; charset=utf-8")
             except OSError:
                 return self.send_error(404)
