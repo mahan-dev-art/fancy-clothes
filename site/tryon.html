@@ -155,7 +155,7 @@
 
   <div class="tryon">
     <div class="stage">
-      <svg viewBox="0 0 400 660" role="img" aria-label="مانکن">
+      <svg viewBox="0 0 400 660" role="img" aria-label="مانکن" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
           <radialGradient id="glow" cx="50%" cy="38%" r="55%">
             <stop offset="0%" stop-color="#c9a24b" stop-opacity="0.20"/>
@@ -205,7 +205,7 @@
         <g clip-path="url(#torsoClip)">
           <g id="garmentG">
             <image id="garmentImg" x="130" y="124" width="140" height="284"
-                   preserveAspectRatio="xMidYMid slice" href=""/>
+                   preserveAspectRatio="xMidYMid slice" href="" xlink:href=""/>
           </g>
         </g>
         <!-- torso outline on top of the garment -->
@@ -329,7 +329,9 @@
   function select(item, group) {
     selected = item;
     selectedGroup = group;
-    garmentImg.setAttribute("href", imageUrl(item, 640));
+    var url = imageUrl(item, 640);
+    garmentImg.setAttribute("href", url);
+    garmentImg.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", url);
     selName.textContent = item.name;
     selColor.textContent = "رنگ: " + faColor(item.color);
     var price = formatPrice(item.price);
@@ -376,6 +378,7 @@
   document.getElementById("clearBtn").addEventListener("click", function () {
     selected = null;
     garmentImg.removeAttribute("href");
+    garmentImg.removeAttributeNS("http://www.w3.org/1999/xlink", "href");
     selName.textContent = "یک لباس انتخاب کن";
     selColor.textContent = "";
     selPrice.textContent = "";
