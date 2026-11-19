@@ -6,7 +6,7 @@
 
 صفحهٔ فروشگاه به **فارسی و راست‌چین** است (فونت وزیرمتن)؛ اسم لباس‌ها چون اسم برنده، انگلیسی مونده.
 
-صفحهٔ اصلی فروشگاه (`/`) محصول‌ها را به‌صورت جدولی نشان می‌دهد و قیمت هر لباس را — وقتی در پنل ادمین وارد شده باشد — به تومان نمایش می‌دهد. نمای کلاسیک رگال هم به فارسی ترجمه شده و روی `/rack` در دسترس است.
+صفحهٔ اصلی فروشگاه (`/`) محصول‌ها را به‌صورت جدولی نشان می‌دهد و قیمت هر لباس را — وقتی در پنل ادمین وارد شده باشد — به تومان نمایش می‌دهد. نمای کلاسیک رگال هم به فارسی ترجمه شده و روی `/rack` در دسترس است. صفحهٔ «پرو روی مانکن» روی `/tryon` است: مشتری لباس را انتخاب می‌کند و آن را تن مانکن می‌بیند، با تنظیم اندازه و جای لباس و دکمهٔ افزودن به سبد.
 
 [English guide below ⬇️](#english)
 
@@ -129,6 +129,7 @@ python3 serve.py
 | `products.json` | The list of products (name, colour, price, pictures). Edit it from the admin panel — no code changes needed. |
 | `orders.json` | Orders placed from the shop (created by the server, managed from the admin panel). |
 | `site/cart.js` | The shared cart + checkout (used by the home page and the rack view). |
+| `site/tryon.html` | The virtual try-on page, served at `/tryon`: pick a product and see it on the mannequin, adjust its fit, add it to the cart. |
 | `admin.html` | The admin panel page, served at `/admin` |
 | `serve.py` | A tiny local server that runs the site. Nothing to install: it only needs Python. It also serves the admin panel and its API. |
 | `start-mac.command` | Double-click to run on Mac |
